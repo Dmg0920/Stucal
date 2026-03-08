@@ -1,0 +1,5 @@
+{
+  "build_command": "python manage.py collectstatic --noinput && python manage.py migrate",
+  "start_command": "gunicorn tutoring.wsgi:application --bind 0.0.0.0:$PORT",
+  "python_version": "3.12"
+}

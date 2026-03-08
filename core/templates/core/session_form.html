@@ -1,0 +1,121 @@
+{% extends "core/base.html" %}
+
+{% block title %}{{ action }} - 家教課程管理{% endblock %}
+
+{% block content %}
+<div class="space-y-4">
+
+  <!-- 返回 -->
+  <a href="javascript:history.back()"
+     class="flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600 transition">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+    返回
+  </a>
+
+  <h1 class="text-xl font-bold text-gray-800">{{ action }}</h1>
+
+  <form method="post" class="space-y-5">
+    {% csrf_token %}
+
+    <!-- 錯誤提示 -->
+    {% if form.errors %}
+    <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+      <p class="text-red-700 text-sm font-medium mb-2">請修正以下錯誤：</p>
+      {% for field in form %}
+        {% for error in field.errors %}
+        <p class="text-red-600 text-sm">{{ field.label }}：{{ error }}</p>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+      <p class="text-red-600 text-sm">{{ error }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- 日期時間 -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-4 space-y-4">
+      <h2 class="font-semibold text-gray-700">時間安排</h2>
+
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">{{ form.date.label }}</label>
+        {{ form.date }}
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">{{ form.time_start.label }}</label>
+          {{ form.time_start }}
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">{{ form.time_end.label }}</label>
+          {{ form.time_end }}
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">{{ form.status.label }}</label>
+        {{ form.status }}
+      </div>
+    </div>
+
+    <!-- 課程內容 -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-4 space-y-4">
+      <h2 class="font-semibold text-gray-700">課程內容</h2>
+
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">{{ form.planned_content.label }}</label>
+        {{ form.planned_content }}
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">{{ form.reminders.label }}</label>
+        {{ form.reminders }}
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">{{ form.actual_content.label }}</label>
+        {{ form.actual_content }}
+      </div>
+    </div>
+
+    <!-- 老師備註 -->
+    <div class="bg-purple-50 border border-purple-100 rounded-2xl px-5 py-4">
+      <h2 class="font-semibold text-purple-700 mb-3">
+        {{ form.teacher_note.label }}
+      </h2>
+      {{ form.teacher_note }}
+      <p class="text-xs text-purple-400 mt-1">此欄位只有老師模式下才會顯示</p>
+    </div>
+
+    <!-- 教材 -->
+    {% if form.materials.field.queryset.count > 0 %}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-4">
+      <h2 class="font-semibold text-gray-700 mb-3">{{ form.materials.label }}</h2>
+      <div class="space-y-2">
+        {% for checkbox in form.materials %}
+        <label class="flex items-center gap-3 cursor-pointer">
+          {{ checkbox.tag }}
+          <span class="text-sm text-gray-700">{{ checkbox.choice_label }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- 送出按鈕 -->
+    <div class="flex gap-3">
+      <button type="submit"
+              class="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-medium hover:bg-indigo-700 transition">
+        儲存課程
+      </button>
+      <a href="javascript:history.back()"
+         class="flex-1 text-center bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition">
+        取消
+      </a>
+    </div>
+
+  </form>
+</div>
+{% endblock %}
