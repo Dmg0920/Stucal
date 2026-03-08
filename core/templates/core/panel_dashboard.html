@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理後台 — Stucal Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang TC', sans-serif;
+      background: #0f1117;
+      color: #e2e4ea;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: #1a1d27;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      width: 220px;
+      min-height: 100vh;
+      position: fixed;
+      top: 0; left: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-area {
+      margin-left: 220px;
+      min-height: 100vh;
+      padding: 36px 40px;
+    }
+    .stat-card {
+      background: #1a1d27;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+    .panel-card {
+      background: #1a1d27;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .panel-table-header {
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 10px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.35);
+    }
+    .panel-row {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .panel-row:last-child { border-bottom: none; }
+    .btn-approve {
+      background: rgba(52,199,89,0.15);
+      color: #34c759;
+      border: 1px solid rgba(52,199,89,0.25);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 7px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .btn-approve:hover { background: rgba(52,199,89,0.25); }
+    .btn-reject {
+      background: rgba(255,59,48,0.12);
+      color: #ff6b6b;
+      border: 1px solid rgba(255,59,48,0.20);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 7px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .btn-reject:hover { background: rgba(255,59,48,0.22); }
+    .btn-revoke {
+      background: rgba(255,149,0,0.12);
+      color: #ff9500;
+      border: 1px solid rgba(255,149,0,0.20);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 7px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .btn-revoke:hover { background: rgba(255,149,0,0.22); }
+    .proof-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.6;
+      max-height: 90px;
+      overflow-y: auto;
+      margin-top: 6px;
+    }
+    .badge-pending {
+      background: rgba(255,149,0,0.15);
+      color: #ff9500;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-approved {
+      background: rgba(52,199,89,0.15);
+      color: #34c759;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      background: #1a1d27;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 14px;
+      color: #e2e4ea;
+      z-index: 999;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: #1a1d27;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 14px;
+      padding: 32px;
+      max-width: 400px;
+      width: 100%;
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="px-6 py-6">
+      <div class="flex items-center gap-3 mb-1">
+        <div class="w-8 h-8 rounded-lg bg-indigo-600/30 flex items-center justify-center">
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-[15px] font-bold text-white">Stucal</div>
+          <div class="text-[11px] text-gray-500">Admin Panel</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="px-3 flex-1">
+      <div class="text-[11px] font-semibold text-gray-600 uppercase tracking-wider px-3 mb-2">管理</div>
+      <a href="{% url 'panel_dashboard' %}"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium bg-indigo-600/15 text-indigo-300 mb-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+        </svg>
+        老師審核
+        {% if pending %}
+        <span class="ml-auto bg-orange-500/20 text-orange-400 text-[11px] font-bold px-2 py-0.5 rounded-full">
+          {{ pending|length }}
+        </span>
+        {% endif %}
+      </a>
+    </nav>
+
+    <div class="px-4 py-5 border-t border-white/07">
+      <a href="{% url 'panel_logout' %}"
+         class="flex items-center gap-2 text-[13px] text-gray-500 hover:text-gray-300 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        登出後台
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-area">
+
+    <!-- Toast messages -->
+    {% if messages %}
+    {% for message in messages %}
+    <div class="toast" id="toast-{{ forloop.counter }}">
+      <span style="color:#34c759">✓</span>
+      {{ message }}
+    </div>
+    <script>
+      setTimeout(() => {
+        const t = document.getElementById('toast-{{ forloop.counter }}');
+        if (t) { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }
+      }, 3500);
+    </script>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-[24px] font-bold text-white">老師審核管理</h1>
+        <p class="text-[14px] text-gray-500 mt-1">審核老師的加入申請，管理已核准帳號</p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-4 gap-4 mb-8">
+      <div class="stat-card">
+        <div class="text-[12px] text-gray-500 uppercase tracking-wider mb-1">待審核</div>
+        <div class="text-[28px] font-bold text-orange-400">{{ pending|length }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-[12px] text-gray-500 uppercase tracking-wider mb-1">已核准老師</div>
+        <div class="text-[28px] font-bold text-green-400">{{ approved|length }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-[12px] text-gray-500 uppercase tracking-wider mb-1">學生總數</div>
+        <div class="text-[28px] font-bold text-indigo-400">{{ total_students }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-[12px] text-gray-500 uppercase tracking-wider mb-1">課程紀錄</div>
+        <div class="text-[28px] font-bold text-blue-400">{{ total_sessions }}</div>
+      </div>
+    </div>
+
+    <!-- Pending Applications -->
+    <div class="mb-8">
+      <h2 class="text-[16px] font-semibold text-white mb-3 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-orange-400 inline-block"></span>
+        待審核申請
+        {% if pending %}
+        <span class="badge-pending">{{ pending|length }} 筆</span>
+        {% endif %}
+      </h2>
+
+      {% if not pending %}
+      <div class="panel-card">
+        <div class="px-6 py-10 text-center text-gray-600">
+          <svg class="w-10 h-10 mx-auto mb-3 opacity-40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="text-[14px]">目前沒有待審核的申請</p>
+        </div>
+      </div>
+      {% else %}
+      <div class="panel-card">
+        <div class="panel-table-header grid" style="grid-template-columns: 1fr 1fr 2fr auto;">
+          <span>姓名 / 帳號</span>
+          <span>申請時間</span>
+          <span>上課證明</span>
+          <span>操作</span>
+        </div>
+        {% for profile in pending %}
+        <div class="panel-row" style="display:grid; grid-template-columns: 1fr 1fr 2fr auto; align-items:start; gap:16px;">
+          <!-- Name -->
+          <div>
+            <div class="text-[15px] font-semibold text-white">{{ profile }}</div>
+            <div class="text-[12px] text-gray-500 mt-0.5">@{{ profile.user.username }}</div>
+          </div>
+          <!-- Date -->
+          <div class="text-[13px] text-gray-400 pt-0.5">
+            {{ profile.user.date_joined|date:"Y/m/d H:i" }}
+          </div>
+          <!-- Proof -->
+          <div>
+            <div class="proof-box">{{ profile.proof }}</div>
+          </div>
+          <!-- Actions -->
+          <div class="flex flex-col gap-2 pt-0.5">
+            <!-- Approve form -->
+            <form method="post" action="{% url 'panel_approve' profile.pk %}">
+              {% csrf_token %}
+              <button type="button" class="btn-approve w-full"
+                      onclick="confirmAction('核准申請', '確定要核准「{{ profile }}」的老師申請嗎？', this.closest('form'))">
+                ✓ 核准
+              </button>
+            </form>
+            <!-- Reject form -->
+            <form method="post" action="{% url 'panel_reject' profile.pk %}">
+              {% csrf_token %}
+              <button type="button" class="btn-reject w-full"
+                      onclick="confirmAction('拒絕申請', '確定要拒絕並刪除「{{ profile }}」的帳號嗎？此操作無法復原。', this.closest('form'))">
+                ✕ 拒絕
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Approved Teachers -->
+    <div>
+      <h2 class="text-[16px] font-semibold text-white mb-3 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-green-400 inline-block"></span>
+        已核准老師
+        {% if approved %}
+        <span class="badge-approved">{{ approved|length }} 位</span>
+        {% endif %}
+      </h2>
+
+      {% if not approved %}
+      <div class="panel-card">
+        <div class="px-6 py-10 text-center text-gray-600 text-[14px]">尚無已核准老師</div>
+      </div>
+      {% else %}
+      <div class="panel-card">
+        <div class="panel-table-header grid" style="grid-template-columns: 1fr 1fr 80px 80px auto;">
+          <span>姓名 / 帳號</span>
+          <span>加入時間</span>
+          <span>學生數</span>
+          <span>課程數</span>
+          <span>操作</span>
+        </div>
+        {% for profile in approved %}
+        <div class="panel-row" style="display:grid; grid-template-columns: 1fr 1fr 80px 80px auto; align-items:center; gap:16px;">
+          <div>
+            <div class="text-[15px] font-semibold text-white">{{ profile }}</div>
+            <div class="text-[12px] text-gray-500 mt-0.5">@{{ profile.user.username }}</div>
+          </div>
+          <div class="text-[13px] text-gray-400">
+            {{ profile.user.date_joined|date:"Y/m/d" }}
+          </div>
+          <div class="text-[14px] text-white font-medium">{{ profile.students.count }}</div>
+          <div class="text-[14px] text-white font-medium">
+            {% with session_count=0 %}
+            {% for s in profile.students.all %}{% endfor %}
+            —
+            {% endwith %}
+          </div>
+          <div>
+            <form method="post" action="{% url 'panel_revoke' profile.pk %}">
+              {% csrf_token %}
+              <button type="button" class="btn-revoke"
+                      onclick="confirmAction('撤銷資格', '確定要撤銷「{{ profile }}」的老師資格嗎？其帳號將被停用。', this.closest('form'))">
+                撤銷
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+  </main>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+      <div class="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
+        <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+      <h3 class="text-[18px] font-bold text-white mb-2" id="modalTitle"></h3>
+      <p class="text-[14px] text-gray-400 mb-6 leading-relaxed" id="modalMessage"></p>
+      <div class="flex gap-3">
+        <button onclick="closeModal()"
+                class="flex-1 py-2.5 rounded-lg border border-white/10 text-[14px] font-medium text-gray-300 hover:bg-white/05 transition-colors">
+          取消
+        </button>
+        <button id="modalConfirmBtn"
+                class="flex-1 py-2.5 rounded-lg bg-red-500/80 hover:bg-red-500 text-[14px] font-semibold text-white transition-colors">
+          確認
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let _pendingForm = null;
+
+    function confirmAction(title, message, form) {
+      _pendingForm = form;
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalMessage').textContent = message;
+      document.getElementById('confirmModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('confirmModal').classList.remove('active');
+      _pendingForm = null;
+    }
+
+    document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+      if (_pendingForm) { _pendingForm.submit(); }
+      closeModal();
+    });
+
+    document.getElementById('confirmModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+
+</body>
+</html>

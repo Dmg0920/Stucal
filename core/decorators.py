@@ -37,3 +37,13 @@ def student_login_required(view_func):
 # 保留舊 decorator 別名，供相容性使用
 def teacher_required(view_func):
     return teacher_login_required(view_func)
+
+
+def admin_required(view_func):
+    """管理員必須透過 panel 登入（session 中有 admin_user_id）"""
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('admin_user_id'):
+            return redirect('panel_login')
+        return view_func(request, *args, **kwargs)
+    return wrapper

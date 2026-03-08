@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理員登入 — Stucal Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang TC', sans-serif;
+      background: #0f1117;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .panel-card {
+      background: #1a1d27;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 380px;
+      padding: 40px 32px;
+    }
+    input[type="text"], input[type="password"] {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 8px;
+      color: #fff;
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus {
+      border-color: rgba(99,102,241,0.6);
+      background: rgba(255,255,255,0.08);
+    }
+    input::placeholder { color: rgba(255,255,255,0.30); }
+    .btn-login {
+      background: #6366f1;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 11px;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      border: none;
+    }
+    .btn-login:hover { background: #4f52e0; }
+    .btn-login:active { transform: scale(0.98); }
+  </style>
+</head>
+<body>
+  <div class="panel-card">
+    <!-- Logo / Title -->
+    <div class="mb-8 text-center">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-600/20 mb-4">
+        <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+      </div>
+      <h1 class="text-[22px] font-bold text-white">管理員後台</h1>
+      <p class="text-[13px] text-gray-500 mt-1">Stucal Admin Panel</p>
+    </div>
+
+    {% if error %}
+    <div class="mb-5 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-[14px]">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="space-y-4">
+        <div>
+          <label class="block text-[12px] font-medium text-gray-400 mb-1.5 uppercase tracking-wider">帳號</label>
+          <input type="text" name="username" autocomplete="username" placeholder="管理員帳號" required>
+        </div>
+        <div>
+          <label class="block text-[12px] font-medium text-gray-400 mb-1.5 uppercase tracking-wider">密碼</label>
+          <input type="password" name="password" autocomplete="current-password" placeholder="••••••••" required>
+        </div>
+      </div>
+      <button type="submit" class="btn-login mt-6">登入後台</button>
+    </form>
+
+    <p class="text-center text-[12px] text-gray-600 mt-6">
+      僅限授權的系統管理員存取
+    </p>
+  </div>
+</body>
+</html>

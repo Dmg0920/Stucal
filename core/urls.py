@@ -34,4 +34,12 @@ urlpatterns = [
 
     # 舊路由相容
     path('login/', views.login_view, name='login'),
+
+    # Admin Panel（獨立登入，不對外顯示）
+    path('panel/login/', views.panel_login, name='panel_login'),
+    path('panel/logout/', views.panel_logout, name='panel_logout'),
+    path('panel/', views.panel_dashboard, name='panel_dashboard'),
+    path('panel/approve/<int:pk>/', views.panel_approve, name='panel_approve'),
+    path('panel/reject/<int:pk>/', views.panel_reject, name='panel_reject'),
+    path('panel/revoke/<int:pk>/', views.panel_revoke, name='panel_revoke'),
 ]

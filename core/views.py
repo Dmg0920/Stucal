@@ -11,7 +11,7 @@ from .forms import (
     TeacherRegisterForm, TeacherLoginForm,
     StudentForm, StudentJoinForm, StudentSetNameForm,
 )
-from .decorators import teacher_login_required, student_selected_required, student_login_required
+from .decorators import teacher_login_required, student_selected_required, student_login_required, admin_required
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -459,3 +459,83 @@ def history(request):
 
 def login_view(request):
     return redirect('teacher_login')
+
+
+# ── Admin Panel ───────────────────────────────────────────────────────────────
+
+def panel_login(request):
+    """管理員登入，獨立於老師/學生 session"""
+    if request.session.get('admin_user_id'):
+        return redirect('panel_dashboard')
+    error = None
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
+        user = authenticate(request, username=username, password=password)
+        if user is None:
+            error = '帳號或密碼錯誤'
+        elif not user.is_staff:
+            error = '您沒有管理員權限'
+        else:
+            request.session['admin_user_id'] = user.pk
+            return redirect('panel_dashboard')
+    return render(request, 'core/panel_login.html', {'error': error})
+
+
+def panel_logout(request):
+    request.session.pop('admin_user_id', None)
+    return redirect('panel_login')
+
+
+@admin_required
+def panel_dashboard(request):
+    all_profiles = TeacherProfile.objects.select_related('user').order_by('user__date_joined')
+    pending = [p for p in all_profiles if not p.user.is_active]
+    approved = [p for p in all_profiles if p.user.is_active and p.is_approved]
+
+    total_students = Student.objects.count()
+    total_sessions = Session.objects.count()
+
+    ctx = {
+        'pending': pending,
+        'approved': approved,
+        'total_students': total_students,
+        'total_sessions': total_sessions,
+    }
+    return render(request, 'core/panel_dashboard.html', ctx)
+
+
+@admin_required
+def panel_approve(request, pk):
+    if request.method == 'POST':
+        profile = get_object_or_404(TeacherProfile, pk=pk)
+        profile.user.is_active = True
+        profile.user.save()
+        profile.is_approved = True
+        profile.save()
+        messages.success(request, f'已核准「{profile}」的申請')
+    return redirect('panel_dashboard')
+
+
+@admin_required
+def panel_reject(request, pk):
+    """拒絕申請並刪除帳號"""
+    if request.method == 'POST':
+        profile = get_object_or_404(TeacherProfile, pk=pk)
+        name = str(profile)
+        profile.user.delete()
+        messages.success(request, f'已拒絕並移除「{name}」的申請')
+    return redirect('panel_dashboard')
+
+
+@admin_required
+def panel_revoke(request, pk):
+    """撤銷已核准老師的資格"""
+    if request.method == 'POST':
+        profile = get_object_or_404(TeacherProfile, pk=pk)
+        profile.is_approved = False
+        profile.user.is_active = False
+        profile.user.save()
+        profile.save()
+        messages.success(request, f'已撤銷「{profile}」的審核資格')
+    return redirect('panel_dashboard')
