@@ -3,53 +3,50 @@
 {% block title %}首頁 - 家教課程管理{% endblock %}
 
 {% block content %}
-<div class="space-y-5">
+<div class="space-y-4">
 
   <!-- 日期標題 -->
-  <div class="text-center pt-2">
-    <p class="text-gray-500 text-sm">{{ today|date:"Y 年 n 月 j 日" }} {{ today|date:"l" }}</p>
-    <h1 class="text-2xl font-bold text-gray-800 mt-1">今日總覽</h1>
+  <div class="pt-1">
+    <p class="text-slate-400 text-sm">{{ today|date:"Y 年 n 月 j 日" }}　{{ today|date:"l" }}</p>
+    <h1 class="text-2xl font-bold text-slate-800 mt-0.5">今日總覽</h1>
   </div>
 
   {% if today_session %}
   <!-- 今日有課程 -->
-  <div class="bg-white rounded-2xl shadow-sm border border-indigo-100 overflow-hidden">
-    <div class="bg-indigo-600 px-5 py-3">
+  <div class="rounded-2xl overflow-hidden shadow-md">
+    <div class="bg-gradient-to-r from-indigo-500 to-violet-500 px-5 py-3.5">
       <div class="flex items-center gap-2 text-white">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <span class="font-semibold">今天有課！</span>
+        <span class="text-lg">🎓</span>
+        <span class="font-semibold tracking-wide">今天有課！</span>
+        <span class="ml-auto text-xs bg-white/20 px-2.5 py-1 rounded-full">
+          {{ today_session.duration_minutes }} 分鐘
+        </span>
       </div>
     </div>
-    <div class="px-5 py-4 space-y-4">
+    <div class="bg-white px-5 py-4 space-y-4">
       <!-- 時間 -->
-      <div class="flex items-center gap-3">
-        <span class="text-3xl font-bold text-indigo-700">
+      <div class="flex items-baseline gap-2">
+        <span class="text-4xl font-bold text-indigo-600 tabular-nums">
           {{ today_session.time_start|time:"H:i" }}
         </span>
-        <span class="text-gray-400">—</span>
-        <span class="text-xl font-semibold text-gray-600">
+        <span class="text-slate-300 text-xl">–</span>
+        <span class="text-2xl font-semibold text-slate-500 tabular-nums">
           {{ today_session.time_end|time:"H:i" }}
-        </span>
-        <span class="ml-auto text-sm bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">
-          {{ today_session.duration_minutes }} 分鐘
         </span>
       </div>
 
       <!-- 預計進度 -->
       {% if today_session.planned_content %}
       <div>
-        <p class="text-xs text-gray-500 font-medium mb-1">預計進度</p>
-        <p class="text-gray-800 leading-relaxed">{{ today_session.planned_content }}</p>
+        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">預計進度</p>
+        <p class="text-slate-700 leading-relaxed text-sm">{{ today_session.planned_content }}</p>
       </div>
       {% endif %}
 
       <!-- 提醒事項 -->
       {% if today_session.reminders %}
-      <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
-        <p class="text-xs text-amber-700 font-medium mb-1">提醒事項</p>
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5">
+        <p class="text-[11px] font-semibold text-amber-600 uppercase tracking-wider mb-1">⚠️ 提醒事項</p>
         <p class="text-amber-900 text-sm leading-relaxed">{{ today_session.reminders }}</p>
       </div>
       {% endif %}
@@ -57,11 +54,11 @@
       <!-- 相關教材 -->
       {% if today_session.materials.all %}
       <div>
-        <p class="text-xs text-gray-500 font-medium mb-2">相關教材</p>
-        <div class="flex flex-wrap gap-2">
+        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">相關教材</p>
+        <div class="flex flex-wrap gap-1.5">
           {% for mat in today_session.materials.all %}
-          <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
-            {{ mat.subject }}：{{ mat.title }}
+          <span class="text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-1 rounded-full">
+            {{ mat.subject }} · {{ mat.title }}
           </span>
           {% endfor %}
         </div>
@@ -69,75 +66,81 @@
       {% endif %}
 
       <a href="{% url 'session_detail' today_session.pk %}"
-         class="block w-full text-center bg-indigo-600 text-white py-2.5 rounded-xl font-medium hover:bg-indigo-700 transition">
-        查看詳情
+         class="block w-full text-center bg-gradient-to-r from-indigo-500 to-violet-500 text-white py-3 rounded-xl font-semibold hover:from-indigo-600 hover:to-violet-600 transition shadow-sm">
+        查看課程詳情 →
       </a>
     </div>
   </div>
 
   {% else %}
   <!-- 今日無課 -->
-  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-8 text-center">
-    <div class="text-5xl mb-3">📅</div>
-    <p class="text-gray-500 text-lg">今天沒有課程</p>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 px-5 py-8 text-center">
+    <div class="text-5xl mb-3">☀️</div>
+    <p class="text-slate-500 font-medium">今天沒有課程</p>
     {% if next_session %}
-    <div class="mt-4 bg-indigo-50 rounded-xl px-4 py-3 inline-block">
-      <p class="text-sm text-indigo-600">下次上課</p>
-      <p class="text-xl font-bold text-indigo-800 mt-1">
+    <div class="mt-5 bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-100 rounded-2xl px-5 py-4 text-left">
+      <p class="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-2">下次上課</p>
+      <p class="text-xl font-bold text-indigo-800">
         {{ next_session.date|date:"n 月 j 日" }}
-        <span class="text-base font-normal">{{ next_session.date|date:"l" }}</span>
+        <span class="text-base font-normal text-indigo-500 ml-1">{{ next_session.date|date:"l" }}</span>
       </p>
-      <p class="text-sm text-indigo-600 mt-1">
+      <p class="text-sm text-indigo-600 mt-1 tabular-nums">
         {{ next_session.time_start|time:"H:i" }} — {{ next_session.time_end|time:"H:i" }}
       </p>
-      <p class="text-2xl font-bold text-indigo-900 mt-2">還有 {{ days_until }} 天</p>
+      <div class="mt-3 flex items-baseline gap-1">
+        <span class="text-3xl font-bold text-indigo-900">{{ days_until }}</span>
+        <span class="text-indigo-500 font-medium">天後</span>
+      </div>
     </div>
     {% else %}
-    <p class="text-gray-400 text-sm mt-3">尚未排定下次課程</p>
+    <p class="text-slate-400 text-sm mt-3">尚未排定下次課程</p>
     {% endif %}
   </div>
   {% endif %}
 
   <!-- 最近完成課程摘要 -->
   {% if last_completed %}
-  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-4">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="font-semibold text-gray-700">上次課程紀錄</h2>
-      <span class="text-xs text-gray-400">{{ last_completed.date|date:"n/j" }}</span>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 px-5 py-4">
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="font-semibold text-slate-700 text-sm">上次課程紀錄</h2>
+      <span class="text-xs text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full">{{ last_completed.date|date:"n/j" }}</span>
     </div>
     {% if last_completed.actual_content %}
-    <p class="text-gray-600 text-sm leading-relaxed">
+    <p class="text-slate-500 text-sm leading-relaxed line-clamp-3">
       {{ last_completed.actual_content|truncatechars:100 }}
     </p>
     {% else %}
-    <p class="text-gray-400 text-sm">尚未填寫課程紀錄</p>
+    <p class="text-slate-400 text-sm italic">尚未填寫課程紀錄</p>
     {% endif %}
     <a href="{% url 'session_detail' last_completed.pk %}"
-       class="text-indigo-600 text-sm font-medium mt-2 inline-block hover:underline">
-      查看完整紀錄 →
+       class="text-indigo-500 text-sm font-medium mt-3 inline-flex items-center gap-1 hover:text-indigo-700 transition">
+      查看完整紀錄
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
     </a>
   </div>
   {% endif %}
 
   <!-- 老師快速操作 -->
   {% if role == 'teacher' %}
-  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-4">
-    <h2 class="font-semibold text-gray-700 mb-3">快速操作</h2>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 px-5 py-4">
+    <h2 class="font-semibold text-slate-700 text-sm mb-3">快速操作</h2>
     <div class="grid grid-cols-2 gap-3">
       <a href="{% url 'session_new' %}"
-         class="flex flex-col items-center gap-1.5 bg-indigo-50 rounded-xl py-4 text-indigo-700 hover:bg-indigo-100 transition">
+         class="flex flex-col items-center gap-2 bg-indigo-50 rounded-xl py-5 text-indigo-600 hover:bg-indigo-100 transition border border-indigo-100">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
-        <span class="text-sm font-medium">新增課程</span>
+        <span class="text-sm font-semibold">新增課程</span>
       </a>
       <a href="{% url 'material_new' %}"
-         class="flex flex-col items-center gap-1.5 bg-green-50 rounded-xl py-4 text-green-700 hover:bg-green-100 transition">
+         class="flex flex-col items-center gap-2 bg-emerald-50 rounded-xl py-5 text-emerald-600 hover:bg-emerald-100 transition border border-emerald-100">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
-        <span class="text-sm font-medium">新增教材</span>
+        <span class="text-sm font-semibold">新增教材</span>
       </a>
     </div>
   </div>
