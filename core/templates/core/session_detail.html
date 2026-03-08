@@ -7,7 +7,7 @@
 
   <!-- 返回 -->
   <a href="javascript:history.back()"
-     class="flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600 transition">
+     class="flex items-center gap-1 text-sm text-white/60 hover:text-white transition">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
     </svg>
@@ -15,33 +15,33 @@
   </a>
 
   <!-- 課程標題卡 -->
-  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-5 py-4 border-b border-gray-50">
+  <div class="glass rounded-2xl overflow-hidden">
+    <div class="px-5 py-4" style="border-bottom: 1px solid rgba(255,255,255,0.25);">
       <div class="flex items-start justify-between">
         <div>
-          <h1 class="text-xl font-bold text-gray-800">
+          <h1 class="text-xl font-bold text-slate-800">
             {{ session.date|date:"Y 年 n 月 j 日" }}
           </h1>
-          <p class="text-gray-500 text-sm mt-0.5">{{ session.date|date:"l" }}</p>
+          <p class="text-slate-500 text-sm mt-0.5">{{ session.date|date:"l" }}</p>
         </div>
-        <span class="text-sm px-3 py-1 rounded-full font-medium
-                     {% if session.status == 'scheduled' %}bg-blue-100 text-blue-700
-                     {% elif session.status == 'completed' %}bg-green-100 text-green-700
-                     {% else %}bg-gray-100 text-gray-500{% endif %}">
+        <span class="text-xs px-3 py-1 rounded-full font-medium
+          {% if session.status == 'scheduled' %}glass-accent text-violet-700
+          {% elif session.status == 'completed' %}glass-emerald text-emerald-700
+          {% else %}glass-sm text-slate-500{% endif %}">
           {{ session.get_status_display }}
         </span>
       </div>
 
       <!-- 時間 -->
       <div class="flex items-center gap-2 mt-3">
-        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
-        <span class="text-gray-700 font-medium">
+        <span class="text-slate-700 font-medium tabular-nums">
           {{ session.time_start|time:"H:i" }} — {{ session.time_end|time:"H:i" }}
         </span>
-        <span class="text-xs text-gray-400">（{{ session.duration_minutes }} 分鐘）</span>
+        <span class="text-xs text-slate-400">（{{ session.duration_minutes }} 分鐘）</span>
       </div>
     </div>
 
@@ -49,53 +49,53 @@
 
       <!-- 預計進度 -->
       <div>
-        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">預計進度</h2>
-        <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">{{ session.planned_content }}</p>
+        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">預計進度</h2>
+        <p class="text-slate-800 leading-relaxed whitespace-pre-wrap text-sm">{{ session.planned_content }}</p>
       </div>
 
       <!-- 提醒事項 -->
       {% if session.reminders %}
-      <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
-        <h2 class="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-2">提醒事項</h2>
-        <p class="text-amber-900 leading-relaxed whitespace-pre-wrap">{{ session.reminders }}</p>
+      <div class="glass-amber rounded-xl p-4">
+        <h2 class="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">提醒事項</h2>
+        <p class="text-amber-900 leading-relaxed whitespace-pre-wrap text-sm">{{ session.reminders }}</p>
       </div>
       {% endif %}
 
       <!-- 實際上課內容 -->
       {% if session.actual_content %}
       <div>
-        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">實際上課內容</h2>
-        <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">{{ session.actual_content }}</p>
+        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">實際上課內容</h2>
+        <p class="text-slate-800 leading-relaxed whitespace-pre-wrap text-sm">{{ session.actual_content }}</p>
       </div>
       {% elif session.status == 'completed' %}
-      <div class="text-gray-400 text-sm italic">尚未填寫課程紀錄</div>
+      <p class="text-slate-400 text-sm italic">尚未填寫課程紀錄</p>
       {% endif %}
 
       <!-- 老師備註（僅老師可見） -->
       {% if role == 'teacher' and session.teacher_note %}
-      <div class="bg-purple-50 border border-purple-100 rounded-xl p-4">
-        <h2 class="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-2">
+      <div class="glass-accent rounded-xl p-4">
+        <h2 class="text-xs font-semibold text-violet-600 uppercase tracking-wide mb-2">
           老師備註
-          <span class="ml-1 text-purple-400 font-normal">（家長不可見）</span>
+          <span class="ml-1 text-violet-400 font-normal normal-case">（家長不可見）</span>
         </h2>
-        <p class="text-purple-900 leading-relaxed whitespace-pre-wrap">{{ session.teacher_note }}</p>
+        <p class="text-violet-900 leading-relaxed whitespace-pre-wrap text-sm">{{ session.teacher_note }}</p>
       </div>
       {% endif %}
 
       <!-- 相關教材 -->
       {% if session.materials.all %}
       <div>
-        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">相關教材</h2>
+        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">相關教材</h2>
         <div class="space-y-2">
           {% for mat in session.materials.all %}
-          <div class="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
+          <div class="glass-sm flex items-center justify-between rounded-xl px-3 py-2.5">
             <div>
-              <span class="text-xs text-indigo-600 font-medium">{{ mat.subject }}</span>
-              <span class="text-sm text-gray-800 ml-2">{{ mat.title }}</span>
+              <span class="text-xs text-violet-600 font-medium">{{ mat.subject }}</span>
+              <span class="text-sm text-slate-700 ml-2">{{ mat.title }}</span>
             </div>
             {% if mat.link %}
             <a href="{{ mat.link }}" target="_blank" rel="noopener"
-               class="text-xs text-indigo-600 hover:underline">連結</a>
+               class="text-xs text-violet-600 hover:underline">連結</a>
             {% endif %}
           </div>
           {% endfor %}
@@ -108,8 +108,7 @@
 
   <!-- 老師編輯按鈕 -->
   {% if role == 'teacher' %}
-  <a href="{% url 'session_edit' session.pk %}"
-     class="block w-full text-center bg-indigo-600 text-white py-3 rounded-xl font-medium hover:bg-indigo-700 transition">
+  <a href="{% url 'session_edit' session.pk %}" class="btn-primary">
     編輯課程
   </a>
   {% endif %}

@@ -7,9 +7,9 @@
 
   <div class="text-center">
     <div class="text-5xl mb-3">🔑</div>
-    <h1 class="text-2xl font-bold text-slate-800">選擇身份</h1>
-    <p class="text-slate-400 text-sm mt-1">
-      目前身份：<span class="font-semibold text-indigo-600">
+    <h1 class="text-2xl font-bold text-white">選擇身份</h1>
+    <p class="text-white/60 text-sm mt-1">
+      目前身份：<span class="font-semibold text-violet-300">
         {% if current_role == 'teacher' %}老師 👩‍🏫{% else %}家長 👨‍👩‍👧{% endif %}
       </span>
     </p>
@@ -24,11 +24,11 @@
       <label class="cursor-pointer">
         <input type="radio" name="role" value="parent" x-model="role" class="sr-only">
         <div :class="role === 'parent'
-               ? 'border-indigo-500 bg-gradient-to-br from-indigo-50 to-violet-50 ring-2 ring-indigo-400 shadow-md'
-               : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'"
-             class="rounded-2xl border-2 px-4 py-6 text-center transition-all duration-150">
+               ? 'border-violet-400 ring-2 ring-violet-300/50'
+               : 'border-white/20 hover:border-white/35'"
+             class="glass rounded-2xl border-2 px-4 py-6 text-center transition-all duration-150">
           <div class="text-4xl mb-2">👨‍👩‍👧</div>
-          <p class="font-bold text-sm" :class="role === 'parent' ? 'text-indigo-700' : 'text-slate-700'">家長</p>
+          <p class="font-bold text-sm" :class="role === 'parent' ? 'text-violet-700' : 'text-slate-700'">家長</p>
           <p class="text-[11px] text-slate-400 mt-1">查看課程與進度</p>
         </div>
       </label>
@@ -36,11 +36,11 @@
       <label class="cursor-pointer">
         <input type="radio" name="role" value="teacher" x-model="role" class="sr-only">
         <div :class="role === 'teacher'
-               ? 'border-indigo-500 bg-gradient-to-br from-indigo-50 to-violet-50 ring-2 ring-indigo-400 shadow-md'
-               : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'"
-             class="rounded-2xl border-2 px-4 py-6 text-center transition-all duration-150">
+               ? 'border-violet-400 ring-2 ring-violet-300/50'
+               : 'border-white/20 hover:border-white/35'"
+             class="glass rounded-2xl border-2 px-4 py-6 text-center transition-all duration-150">
           <div class="text-4xl mb-2">👩‍🏫</div>
-          <p class="font-bold text-sm" :class="role === 'teacher' ? 'text-indigo-700' : 'text-slate-700'">老師</p>
+          <p class="font-bold text-sm" :class="role === 'teacher' ? 'text-violet-700' : 'text-slate-700'">老師</p>
           <p class="text-[11px] text-slate-400 mt-1">管理課程與備註</p>
         </div>
       </label>
@@ -52,7 +52,7 @@
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0 -translate-y-1"
          x-transition:enter-end="opacity-100 translate-y-0"
-         class="bg-white rounded-2xl border border-slate-200 px-5 py-4 shadow-sm">
+         class="glass rounded-2xl px-5 py-4">
       <label class="block text-sm font-medium text-slate-600 mb-2">
         🔒 老師密碼
       </label>
@@ -68,15 +68,14 @@
       {% endif %}
     </div>
 
-    <button type="submit"
-            class="w-full bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white py-3.5 rounded-xl font-bold text-base transition shadow-md">
+    <button type="submit" class="btn-primary w-full">
       確認切換身份
     </button>
 
   </form>
 
   <a href="{% url 'home' %}"
-     class="block text-center text-sm text-slate-400 hover:text-slate-600 transition">
+     class="block text-center text-sm text-white/40 hover:text-white/65 transition">
     取消，回首頁
   </a>
 
