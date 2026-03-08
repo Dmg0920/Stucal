@@ -7,14 +7,14 @@
   <!-- 月份導覽 -->
   <div class="flex items-center justify-between pb-4">
     <a href="?year={{ prev_year }}&month={{ prev_month }}"
-       class="w-10 h-10 flex items-center justify-center rounded-full bg-white text-[#007AFF]">
+       class="prev-month w-10 h-10 flex items-center justify-center rounded-full bg-white text-[#007AFF]">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
       </svg>
     </a>
     <h1 class="text-[22px] font-bold text-black">{{ year }} 年 {{ month_name }}</h1>
     <a href="?year={{ next_year }}&month={{ next_month }}"
-       class="w-10 h-10 flex items-center justify-center rounded-full bg-white text-[#007AFF]">
+       class="next-month w-10 h-10 flex items-center justify-center rounded-full bg-white text-[#007AFF]">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
       </svg>
@@ -22,7 +22,7 @@
   </div>
 
   <!-- 月曆 -->
-  <div class="ios-section mb-5">
+  <div class="ios-section mb-5 cal-grid">
     <!-- 星期標題 -->
     <div class="grid grid-cols-7 border-b border-[rgba(60,60,67,0.12)]">
       {% for d in "一二三四五六日" %}
@@ -35,7 +35,7 @@
     <!-- 日期格 -->
     <div class="grid grid-cols-7">
       {% for week in calendar %}{% for day in week %}
-      <div class="min-h-[52px] border-b border-r border-[rgba(60,60,67,0.08)] p-1 last:border-r-0">
+      <div class="cal-cell min-h-[52px] border-b border-r border-[rgba(60,60,67,0.08)] p-1 last:border-r-0">
         {% if day != 0 %}
         <div class="flex flex-col items-center gap-0.5">
           <span class="text-[13px] w-7 h-7 flex items-center justify-center rounded-full font-medium
@@ -97,4 +97,35 @@
   {% endif %}
 
 </div>
+
+<script>
+  // 月曆格子 stagger 進場
+  document.querySelectorAll('.cal-cell').forEach((cell, i) => {
+    cell.style.animationName = 'cardEnter';
+    cell.style.animationDuration = '0.22s';
+    cell.style.animationFillMode = 'both';
+    cell.style.animationTimingFunction = 'cubic-bezier(0.25,0.46,0.45,0.94)';
+    cell.style.animationDelay = (i * 12) + 'ms';
+  });
+
+  // 月份切換 slide exit
+  document.querySelector('.prev-month').addEventListener('click', function(e) {
+    e.preventDefault();
+    const href = this.href;
+    const grid = document.querySelector('.cal-grid');
+    grid.style.transition = 'transform 0.18s ease-in, opacity 0.18s';
+    grid.style.transform = 'translateX(30px)';
+    grid.style.opacity = '0';
+    setTimeout(() => { location.href = href; }, 180);
+  });
+  document.querySelector('.next-month').addEventListener('click', function(e) {
+    e.preventDefault();
+    const href = this.href;
+    const grid = document.querySelector('.cal-grid');
+    grid.style.transition = 'transform 0.18s ease-in, opacity 0.18s';
+    grid.style.transform = 'translateX(-30px)';
+    grid.style.opacity = '0';
+    setTimeout(() => { location.href = href; }, 180);
+  });
+</script>
 {% endblock %}
