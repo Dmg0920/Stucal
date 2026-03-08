@@ -52,7 +52,7 @@ class Student(models.Model):
 class Material(models.Model):
     teacher = models.ForeignKey(
         TeacherProfile, on_delete=models.CASCADE, related_name='materials',
-        verbose_name='老師', null=True, blank=True
+        verbose_name='老師'
     )
     student = models.ForeignKey(
         Student, on_delete=models.SET_NULL, related_name='materials',
@@ -95,7 +95,7 @@ class Session(models.Model):
 
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name='sessions',
-        verbose_name='學生', null=True, blank=True
+        verbose_name='學生'
     )
     date = models.DateField(verbose_name='上課日期')
     time_start = models.TimeField(verbose_name='開始時間')
