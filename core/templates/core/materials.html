@@ -1,93 +1,68 @@
 {% extends "core/base.html" %}
-
-{% block title %}教材列表 - 家教課程管理{% endblock %}
+{% block title %}教材庫{% endblock %}
 
 {% block content %}
 <div class="space-y-4">
 
   <div class="flex items-center justify-between">
-    <h1 class="text-xl font-bold text-white">教材庫</h1>
+    <h1 class="text-xl font-bold text-slate-800">教材庫</h1>
     {% if role == 'teacher' %}
     <a href="{% url 'material_new' %}"
-       class="glass-tag text-sm text-white/90 hover:text-white font-medium px-4 py-2 rounded-xl transition">
+       class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg font-medium transition">
       + 新增
     </a>
     {% endif %}
   </div>
 
-  <!-- 科目篩選 -->
   {% if subjects %}
-  <div class="flex flex-wrap gap-2">
+  <div class="flex flex-wrap gap-1.5">
     <a href="{% url 'materials_list' %}"
-       class="text-xs px-3 py-1.5 rounded-full transition font-medium
-              {% if not subject_filter %}btn-primary py-1.5 text-xs{% else %}glass-tag text-white/75 hover:text-white{% endif %}">
+       class="text-xs px-3 py-1.5 rounded-full font-medium transition
+              {% if not subject_filter %}bg-indigo-600 text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:border-slate-300{% endif %}">
       全部
     </a>
     {% for subject in subjects %}
     <a href="?subject={{ subject }}"
-       class="text-xs px-3 py-1.5 rounded-full transition font-medium
-              {% if subject_filter == subject %}btn-primary py-1.5 text-xs{% else %}glass-tag text-white/75 hover:text-white{% endif %}">
+       class="text-xs px-3 py-1.5 rounded-full font-medium transition
+              {% if subject_filter == subject %}bg-indigo-600 text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:border-slate-300{% endif %}">
       {{ subject }}
     </a>
     {% endfor %}
   </div>
   {% endif %}
 
-  <!-- 教材列表 -->
-  <div class="space-y-3">
+  <div class="space-y-2">
     {% for material in materials %}
-    <div class="glass rounded-2xl px-4 py-4">
+    <div class="bg-white border border-slate-200 rounded-xl px-4 py-3.5">
       <div class="flex items-start justify-between gap-3">
         <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1.5">
-            <span class="glass-accent text-xs text-violet-700 px-2.5 py-0.5 rounded-full font-medium">
-              {{ material.subject }}
-            </span>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">{{ material.subject }}</span>
           </div>
-          <h3 class="font-semibold text-slate-800">{{ material.title }}</h3>
+          <p class="font-medium text-slate-800 text-sm">{{ material.title }}</p>
           {% if material.description %}
-          <p class="text-sm text-slate-500 mt-1 leading-relaxed">{{ material.description }}</p>
+          <p class="text-xs text-slate-500 mt-0.5 leading-relaxed">{{ material.description }}</p>
           {% endif %}
           {% if material.file %}
-          <div class="flex items-center gap-1.5 mt-2">
-            <svg class="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-            </svg>
-            <span class="text-xs text-slate-400 truncate">{{ material.file_name }}</span>
-          </div>
+          <p class="text-xs text-slate-400 mt-1">📎 {{ material.file_name }}</p>
           {% endif %}
-          <p class="text-xs text-slate-400 mt-2">{{ material.created_at|date:"Y/n/j" }} 新增</p>
         </div>
-        <!-- 操作按鈕 -->
-        <div class="flex flex-col gap-1.5 flex-shrink-0">
+        <div class="flex flex-col gap-1 flex-shrink-0">
           {% if material.file %}
-          <a href="{{ material.file.url }}" target="_blank" rel="noopener"
-             class="glass-accent flex items-center gap-1 text-sm text-violet-700 px-3 py-1.5 rounded-lg hover:opacity-80 transition">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
+          <a href="{{ material.file.url }}" target="_blank"
+             class="text-xs text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg transition font-medium">
             下載
           </a>
           {% endif %}
           {% if material.link %}
-          <a href="{{ material.link }}" target="_blank" rel="noopener"
-             class="glass-sm flex items-center gap-1 text-sm text-slate-600 px-3 py-1.5 rounded-lg hover:opacity-80 transition">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-            </svg>
+          <a href="{{ material.link }}" target="_blank"
+             class="text-xs text-slate-600 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-lg transition font-medium">
             連結
           </a>
           {% endif %}
           {% if role == 'teacher' %}
           <a href="{% url 'material_edit' material.pk %}"
-             class="glass-sm flex items-center gap-1 text-sm text-slate-500 px-3 py-1.5 rounded-lg hover:opacity-80 transition">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-            </svg>
+             class="text-xs text-slate-500 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-lg transition font-medium">
             編輯
           </a>
           {% endif %}
@@ -95,13 +70,11 @@
       </div>
     </div>
     {% empty %}
-    <div class="glass rounded-2xl text-center py-12 text-slate-400">
-      <div class="text-4xl mb-3">📚</div>
-      <p>尚無教材</p>
+    <div class="text-center py-12 text-slate-400">
+      <p class="text-3xl mb-2">📚</p>
+      <p class="text-sm">尚無教材</p>
       {% if role == 'teacher' %}
-      <a href="{% url 'material_new' %}" class="text-violet-600 text-sm mt-2 inline-block hover:underline">
-        新增第一個教材
-      </a>
+      <a href="{% url 'material_new' %}" class="text-indigo-500 text-sm mt-2 inline-block hover:underline">新增第一個教材</a>
       {% endif %}
     </div>
     {% endfor %}

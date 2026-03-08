@@ -1,51 +1,44 @@
 {% extends "core/base.html" %}
-
-{% block title %}課程紀錄 - 家教課程管理{% endblock %}
+{% block title %}課程紀錄{% endblock %}
 
 {% block content %}
 <div class="space-y-4">
 
-  <h1 class="text-xl font-bold text-white">課程紀錄</h1>
+  <h1 class="text-xl font-bold text-slate-800">課程紀錄</h1>
 
-  <div class="space-y-3">
+  <div class="space-y-2">
     {% for session in sessions %}
     <a href="{% url 'session_detail' session.pk %}"
-       class="glass block rounded-2xl px-4 py-4 hover:opacity-85 transition">
-      <div class="flex items-start justify-between gap-3">
-        <div class="flex-1 min-w-0">
-          <p class="font-semibold text-slate-800">
-            {{ session.date|date:"Y 年 n 月 j 日" }}
-            <span class="text-slate-400 font-normal text-sm ml-1">{{ session.date|date:"l" }}</span>
-          </p>
-          <p class="text-sm text-slate-500 mt-0.5 tabular-nums">
-            {{ session.time_start|time:"H:i" }} — {{ session.time_end|time:"H:i" }}
-            （{{ session.duration_minutes }} 分鐘）
-          </p>
-          {% if session.actual_content %}
-          <p class="text-sm text-slate-600 mt-2 leading-relaxed truncate">
-            {{ session.actual_content|truncatechars:80 }}
-          </p>
-          {% else %}
-          <p class="text-sm text-slate-400 mt-2 italic">尚未填寫課程紀錄</p>
-          {% endif %}
+       class="bg-white border border-slate-200 rounded-xl px-4 py-3.5 flex items-start justify-between gap-3 hover:border-slate-300 transition block">
+      <div class="flex-1 min-w-0">
+        <p class="font-semibold text-slate-800 text-sm">
+          {{ session.date|date:"Y 年 n 月 j 日" }}
+          <span class="text-slate-400 font-normal">{{ session.date|date:"l" }}</span>
+        </p>
+        <p class="text-xs text-slate-500 mt-0.5 tabular-nums">
+          {{ session.time_start|time:"H:i" }} — {{ session.time_end|time:"H:i" }}（{{ session.duration_minutes }} 分鐘）
+        </p>
+        {% if session.actual_content %}
+        <p class="text-xs text-slate-500 mt-1.5 leading-relaxed truncate">{{ session.actual_content|truncatechars:80 }}</p>
+        {% else %}
+        <p class="text-xs text-slate-400 mt-1.5 italic">尚未填寫紀錄</p>
+        {% endif %}
+        {% if session.materials.all %}
+        <div class="flex flex-wrap gap-1 mt-2">
+          {% for mat in session.materials.all %}
+          <span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{{ mat.title }}</span>
+          {% endfor %}
         </div>
-        <svg class="w-4 h-4 text-slate-300 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
+        {% endif %}
       </div>
-
-      {% if session.materials.all %}
-      <div class="flex flex-wrap gap-1 mt-3">
-        {% for mat in session.materials.all %}
-        <span class="glass-sm text-xs text-slate-500 px-2 py-0.5 rounded-full">{{ mat.title }}</span>
-        {% endfor %}
-      </div>
-      {% endif %}
+      <svg class="w-4 h-4 text-slate-300 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+      </svg>
     </a>
     {% empty %}
-    <div class="glass rounded-2xl text-center py-12">
-      <div class="text-4xl mb-3">📋</div>
-      <p class="text-slate-400">尚無已完成的課程</p>
+    <div class="text-center py-12">
+      <p class="text-3xl mb-2">📋</p>
+      <p class="text-sm text-slate-400">尚無已完成的課程</p>
     </div>
     {% endfor %}
   </div>

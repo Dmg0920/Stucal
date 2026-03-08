@@ -1,92 +1,66 @@
 {% extends "core/base.html" %}
-
-{% block title %}{{ action }} - 家教課程管理{% endblock %}
+{% block title %}{{ action }}{% endblock %}
 
 {% block content %}
 <div class="space-y-4">
 
-  <a href="javascript:history.back()"
-     class="flex items-center gap-1 text-sm text-white/60 hover:text-white transition">
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-    </svg>
-    返回
-  </a>
+  <div class="flex items-center gap-2">
+    <a href="javascript:history.back()" class="text-slate-400 hover:text-slate-600">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </a>
+    <h1 class="text-xl font-bold text-slate-800">{{ action }}</h1>
+  </div>
 
-  <h1 class="text-xl font-bold text-white">{{ action }}</h1>
-
-  <form method="post" enctype="multipart/form-data" class="space-y-4">
+  <form method="post" enctype="multipart/form-data" class="space-y-3">
     {% csrf_token %}
 
     {% if form.errors %}
-    <div class="glass-red rounded-xl p-4">
-      {% for field in form %}
-        {% for error in field.errors %}
-        <p class="text-red-700 text-sm">{{ field.label }}：{{ error }}</p>
-        {% endfor %}
-      {% endfor %}
+    <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+      {% for field in form %}{% for e in field.errors %}
+      <p class="text-red-600 text-sm">{{ field.label }}：{{ e }}</p>
+      {% endfor %}{% endfor %}
     </div>
     {% endif %}
 
-    <div class="glass rounded-2xl px-5 py-4 space-y-4">
+    <div class="bg-white border border-slate-200 rounded-xl px-4 py-4 space-y-4">
 
       <div>
-        <label class="block text-sm text-slate-600 mb-1">{{ form.title.label }}</label>
+        <label class="block text-xs font-medium text-slate-500 mb-1">{{ form.title.label }}</label>
         {{ form.title }}
       </div>
-
       <div>
-        <label class="block text-sm text-slate-600 mb-1">{{ form.subject.label }}</label>
+        <label class="block text-xs font-medium text-slate-500 mb-1">{{ form.subject.label }}</label>
         {{ form.subject }}
       </div>
-
       <div>
-        <label class="block text-sm text-slate-600 mb-1">{{ form.description.label }}</label>
+        <label class="block text-xs font-medium text-slate-500 mb-1">{{ form.description.label }}</label>
         {{ form.description }}
       </div>
-
-      <!-- 外部連結 -->
       <div>
-        <label class="block text-sm text-slate-600 mb-1">{{ form.link.label }}</label>
+        <label class="block text-xs font-medium text-slate-500 mb-1">{{ form.link.label }}</label>
         {{ form.link }}
-        <p class="text-xs text-slate-400 mt-1">可留空</p>
       </div>
 
-      <!-- 上傳檔案 -->
       <div x-data="{ fileName: '' }">
-        <label class="block text-sm text-slate-600 mb-2">{{ form.file.label }}</label>
+        <label class="block text-xs font-medium text-slate-500 mb-2">{{ form.file.label }}</label>
 
         {% if material.file %}
-        <div class="glass-accent flex items-center gap-2 mb-3 rounded-xl px-3 py-2.5">
-          <svg class="w-5 h-5 text-violet-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-          <span class="text-sm text-violet-700 truncate">{{ material.file_name }}</span>
-          <a href="{{ material.file.url }}" target="_blank"
-             class="ml-auto text-xs text-violet-600 hover:underline flex-shrink-0">開啟</a>
+        <div class="flex items-center gap-2 mb-2 bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-2">
+          <span class="text-xs text-indigo-700 truncate flex-1">📎 {{ material.file_name }}</span>
+          <a href="{{ material.file.url }}" target="_blank" class="text-xs text-indigo-600 hover:underline flex-shrink-0">開啟</a>
         </div>
-        <p class="text-xs text-slate-500 mb-2">重新上傳以取代現有檔案，或留空保留原檔</p>
+        <p class="text-xs text-slate-400 mb-2">重新上傳以取代，或留空保留原檔</p>
         {% endif %}
 
-        <label class="flex flex-col items-center justify-center w-full h-28 rounded-xl cursor-pointer transition glass-sm hover:opacity-80"
-               style="border: 2px dashed rgba(167,139,250,0.45);"
+        <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100 transition"
                @dragover.prevent @drop.prevent="fileName = $event.dataTransfer.files[0]?.name || ''">
-          <div class="flex flex-col items-center justify-center gap-1 py-4" x-show="!fileName">
-            <svg class="w-8 h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-            </svg>
-            <p class="text-sm text-slate-500">點擊選擇或拖曳檔案至此</p>
-            <p class="text-xs text-slate-400">PDF、Word、PPT、Excel、圖片，最大 20MB</p>
+          <div x-show="!fileName" class="text-center">
+            <p class="text-sm text-slate-500">點擊選擇或拖曳檔案</p>
+            <p class="text-xs text-slate-400 mt-0.5">PDF、Word、PPT、Excel、圖片，最大 20MB</p>
           </div>
-          <div class="flex items-center gap-2 py-4" x-show="fileName" x-cloak>
-            <svg class="w-6 h-6 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <span class="text-sm text-violet-700" x-text="fileName"></span>
-          </div>
+          <div x-show="fileName" x-cloak class="text-sm text-indigo-600 font-medium" x-text="'✓ ' + fileName"></div>
           <input type="file" name="file" class="hidden"
                  accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png"
                  @change="fileName = $event.target.files[0]?.name || ''">
@@ -96,14 +70,15 @@
     </div>
 
     <div class="flex gap-3">
-      <button type="submit" class="btn-primary flex-1">
-        儲存教材
+      <button type="submit"
+              class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition text-sm">
+        儲存
       </button>
-      <a href="javascript:history.back()" class="btn-secondary flex-1">
+      <a href="javascript:history.back()"
+         class="flex-1 text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 rounded-xl transition text-sm">
         取消
       </a>
     </div>
-
   </form>
 </div>
 {% endblock %}
