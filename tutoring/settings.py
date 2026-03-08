@@ -12,6 +12,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '.zeabur.app',
+    '.onrender.com',
 ]
 
 INSTALLED_APPS = [
