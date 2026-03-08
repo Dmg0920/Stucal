@@ -127,7 +127,9 @@ class Session(models.Model):
 
     @property
     def duration_minutes(self):
-        from datetime import datetime, date
+        from datetime import datetime, date, timedelta
         start = datetime.combine(date.today(), self.time_start)
         end = datetime.combine(date.today(), self.time_end)
+        if end < start:
+            end += timedelta(days=1)
         return int((end - start).total_seconds() / 60)
