@@ -1,55 +1,52 @@
 {% extends "core/base.html" %}
-{% block title %}月曆{% endblock %}
+{% block title %}月曆 — Stucal{% endblock %}
 
 {% block content %}
-<div class="space-y-4">
+<div>
 
   <!-- 月份導覽 -->
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between pb-4">
     <a href="?year={{ prev_year }}&month={{ prev_month }}"
-       class="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition text-slate-600">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+       class="w-10 h-10 flex items-center justify-center rounded-full bg-white text-[#007AFF]">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
       </svg>
     </a>
-    <h1 class="font-bold text-slate-800">{{ year }} 年 {{ month_name }}</h1>
+    <h1 class="text-[22px] font-bold text-black">{{ year }} 年 {{ month_name }}</h1>
     <a href="?year={{ next_year }}&month={{ next_month }}"
-       class="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition text-slate-600">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+       class="w-10 h-10 flex items-center justify-center rounded-full bg-white text-[#007AFF]">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
       </svg>
     </a>
   </div>
 
   <!-- 月曆 -->
-  <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
-    <div class="grid grid-cols-7 border-b border-slate-100">
+  <div class="ios-section mb-5">
+    <!-- 星期標題 -->
+    <div class="grid grid-cols-7 border-b border-[rgba(60,60,67,0.12)]">
       {% for d in "一二三四五六日" %}
-      <div class="py-2 text-center text-xs font-medium
-                  {% if forloop.counter == 7 %}text-red-400{% elif forloop.counter == 6 %}text-blue-400{% else %}text-slate-500{% endif %}">
-        {{ d }}
-      </div>
+      <div class="py-2 text-center text-[12px] font-medium
+                  {% if forloop.counter == 7 %}text-[#FF3B30]
+                  {% elif forloop.counter == 6 %}text-[#007AFF]
+                  {% else %}text-[#8E8E93]{% endif %}">{{ d }}</div>
       {% endfor %}
     </div>
+    <!-- 日期格 -->
     <div class="grid grid-cols-7">
       {% for week in calendar %}{% for day in week %}
-      <div class="min-h-[64px] border-b border-r border-slate-50 p-1 last:border-r-0
-                  {% if day == 0 %}bg-slate-25{% endif %}">
+      <div class="min-h-[52px] border-b border-r border-[rgba(60,60,67,0.08)] p-1 last:border-r-0">
         {% if day != 0 %}
-        <div class="flex flex-col gap-0.5">
-          <span class="text-xs w-6 h-6 flex items-center justify-center rounded-full font-medium
-                       {% if day == today.day and month == today.month and year == today.year %}bg-indigo-600 text-white
-                       {% elif forloop.counter == 7 %}text-red-400
-                       {% elif forloop.counter == 6 %}text-blue-400
-                       {% else %}text-slate-700{% endif %}">
-            {{ day }}
-          </span>
+        <div class="flex flex-col items-center gap-0.5">
+          <span class="text-[13px] w-7 h-7 flex items-center justify-center rounded-full font-medium
+            {% if day == today.day and month == today.month and year == today.year %}bg-[#007AFF] text-white font-bold
+            {% elif forloop.counter == 7 %}text-[#FF3B30]
+            {% elif forloop.counter == 6 %}text-[#007AFF]
+            {% else %}text-black{% endif %}">{{ day }}</span>
           {% for pk_day, pk in first_pk_by_day.items %}
             {% if pk_day == day %}
             <a href="{% url 'session_detail' pk %}"
-               class="text-[10px] bg-indigo-100 text-indigo-700 rounded px-1 py-0.5 text-center hover:bg-indigo-200 transition leading-tight">
-              有課
-            </a>
+               class="w-1.5 h-1.5 rounded-full bg-[#007AFF] block"></a>
             {% endif %}
           {% endfor %}
         </div>
@@ -60,37 +57,43 @@
   </div>
 
   <!-- 本月課程 -->
-  <div>
-    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">本月課程</p>
-    <div class="space-y-2">
-      {% for day, sessions in session_dates.items %}{% for session in sessions %}
-      <a href="{% url 'session_detail' session.pk %}"
-         class="bg-white border border-slate-200 rounded-xl px-4 py-3 flex items-center justify-between hover:border-slate-300 transition block">
-        <div>
-          <p class="text-sm font-semibold text-slate-800">{{ session.date|date:"n 月 j 日" }} <span class="text-slate-400 font-normal">{{ session.date|date:"l" }}</span></p>
-          <p class="text-xs text-slate-500 tabular-nums">{{ session.time_start|time:"H:i" }} — {{ session.time_end|time:"H:i" }}</p>
-          {% if session.planned_content %}
-          <p class="text-xs text-slate-400 mt-0.5 truncate">{{ session.planned_content }}</p>
-          {% endif %}
-        </div>
-        <span class="text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ml-3
-          {% if session.status == 'scheduled' %}bg-blue-100 text-blue-700
-          {% elif session.status == 'completed' %}bg-green-100 text-green-700
-          {% else %}bg-slate-100 text-slate-500{% endif %}">
-          {{ session.get_status_display }}
-        </span>
-      </a>
-      {% endfor %}{% empty %}
-      <p class="text-sm text-slate-400 text-center py-6">本月尚無課程</p>
-      {% endfor %}
+  <p class="ios-section-header" style="margin-top: 0;">本月課程</p>
+  {% if session_dates %}
+  <div class="ios-section mb-5">
+    {% for day, sessions in session_dates.items %}{% for session in sessions %}
+    <a href="{% url 'session_detail' session.pk %}"
+       class="ios-cell ios-cell-nav{% if not forloop.first %} border-t border-[rgba(60,60,67,0.29)]{% endif %}">
+      <div class="flex-1">
+        <p class="text-[17px] font-medium text-black">
+          {{ session.date|date:"n 月 j 日" }}
+          <span class="text-[#8E8E93] font-normal text-[15px]">{{ session.date|date:"l" }}</span>
+        </p>
+        <p class="text-[13px] text-[#8E8E93] tabular-nums">{{ session.time_start|time:"H:i" }} — {{ session.time_end|time:"H:i" }}</p>
+        {% if session.planned_content %}
+        <p class="text-[13px] text-[#8E8E93] truncate mt-0.5">{{ session.planned_content }}</p>
+        {% endif %}
+      </div>
+      <span class="badge ml-2 flex-shrink-0
+        {% if session.status == 'scheduled' %}badge-blue
+        {% elif session.status == 'completed' %}badge-green
+        {% else %}badge-gray{% endif %}">
+        {{ session.get_status_display }}
+      </span>
+    </a>
+    {% endfor %}{% endfor %}
+  </div>
+  {% else %}
+  <div class="ios-section mb-5">
+    <div class="ios-cell justify-center py-8">
+      <p class="text-[17px] text-[#8E8E93]">本月尚無課程</p>
     </div>
   </div>
+  {% endif %}
 
   {% if role == 'teacher' %}
-  <a href="{% url 'session_new' %}"
-     class="block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition text-sm">
-    + 新增課程
-  </a>
+  <div class="pb-6">
+    <a href="{% url 'session_new' %}" class="ios-btn">+ 新增課程</a>
+  </div>
   {% endif %}
 
 </div>

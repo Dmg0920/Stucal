@@ -1,101 +1,97 @@
 {% extends "core/base.html" %}
-{% block title %}{{ action }}{% endblock %}
+{% block title %}{{ action }} — Stucal{% endblock %}
 
 {% block content %}
-<div class="space-y-4">
+<div>
 
-  <div class="flex items-center gap-2">
-    <a href="javascript:history.back()" class="text-slate-400 hover:text-slate-600">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+  <div class="pb-4">
+    <a href="javascript:history.back()" class="text-[17px] text-[#007AFF] flex items-center gap-0.5 w-fit">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
       </svg>
+      返回
     </a>
-    <h1 class="text-xl font-bold text-slate-800">{{ action }}</h1>
   </div>
+  <h1 class="text-[28px] font-bold tracking-tight text-black pb-5">{{ action }}</h1>
 
-  <form method="post" class="space-y-3">
+  <form method="post" class="space-y-0">
     {% csrf_token %}
 
     {% if form.errors %}
-    <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+    <div class="ios-section mb-5">
       {% for field in form %}{% for e in field.errors %}
-      <p class="text-red-600 text-sm">{{ field.label }}：{{ e }}</p>
+      <div class="ios-cell">
+        <p class="text-[15px] text-[#FF3B30]">{{ field.label }}：{{ e }}</p>
+      </div>
       {% endfor %}{% endfor %}
     </div>
     {% endif %}
 
-    <!-- 時間 -->
-    <div class="bg-white border border-slate-200 rounded-xl px-4 py-4 space-y-3">
-      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">時間安排</p>
-      <div>
-        <label class="block text-xs text-slate-500 mb-1">{{ form.date.label }}</label>
+    <!-- 時間安排 -->
+    <p class="ios-section-header" style="margin-top: 0;">時間安排</p>
+    <div class="ios-section mb-5">
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">日期</label>
         {{ form.date }}
       </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs text-slate-500 mb-1">{{ form.time_start.label }}</label>
-          {{ form.time_start }}
-        </div>
-        <div>
-          <label class="block text-xs text-slate-500 mb-1">{{ form.time_end.label }}</label>
-          {{ form.time_end }}
-        </div>
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">開始</label>
+        {{ form.time_start }}
       </div>
-      <div>
-        <label class="block text-xs text-slate-500 mb-1">{{ form.status.label }}</label>
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">結束</label>
+        {{ form.time_end }}
+      </div>
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">狀態</label>
         {{ form.status }}
       </div>
     </div>
 
     <!-- 課程內容 -->
-    <div class="bg-white border border-slate-200 rounded-xl px-4 py-4 space-y-3">
-      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">課程內容</p>
-      <div>
-        <label class="block text-xs text-slate-500 mb-1">{{ form.planned_content.label }}</label>
+    <p class="ios-section-header">課程內容</p>
+    <div class="ios-section mb-5">
+      <div class="ios-cell flex-col items-start" style="min-height: 70px; align-items: flex-start; padding-top: 12px;">
+        <label class="text-[12px] text-[#8E8E93] uppercase tracking-wide mb-1">預計進度</label>
         {{ form.planned_content }}
       </div>
-      <div>
-        <label class="block text-xs text-slate-500 mb-1">{{ form.reminders.label }}</label>
+      <div class="ios-cell flex-col items-start" style="min-height: 60px; align-items: flex-start; padding-top: 12px;">
+        <label class="text-[12px] text-[#8E8E93] uppercase tracking-wide mb-1">提醒事項</label>
         {{ form.reminders }}
       </div>
-      <div>
-        <label class="block text-xs text-slate-500 mb-1">{{ form.actual_content.label }}</label>
+      <div class="ios-cell flex-col items-start" style="min-height: 70px; align-items: flex-start; padding-top: 12px;">
+        <label class="text-[12px] text-[#8E8E93] uppercase tracking-wide mb-1">實際上課內容</label>
         {{ form.actual_content }}
       </div>
     </div>
 
     <!-- 老師備註 -->
-    <div class="bg-purple-50 border border-purple-100 rounded-xl px-4 py-3.5">
-      <label class="block text-xs font-semibold text-purple-600 mb-1.5">{{ form.teacher_note.label }}</label>
-      {{ form.teacher_note }}
-      <p class="text-xs text-purple-400 mt-1">只有老師模式可見</p>
+    <p class="ios-section-header">老師備註</p>
+    <div class="ios-section mb-1">
+      <div class="ios-cell flex-col items-start" style="min-height: 60px; align-items: flex-start; padding-top: 12px;">
+        {{ form.teacher_note }}
+      </div>
     </div>
+    <p class="ios-section-footer mb-5">此欄位只有老師模式可見</p>
 
     <!-- 教材 -->
     {% if form.materials.field.queryset.count > 0 %}
-    <div class="bg-white border border-slate-200 rounded-xl px-4 py-4">
-      <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">{{ form.materials.label }}</p>
-      <div class="space-y-2">
-        {% for checkbox in form.materials %}
-        <label class="flex items-center gap-2.5 cursor-pointer">
-          {{ checkbox.tag }}
-          <span class="text-sm text-slate-700">{{ checkbox.choice_label }}</span>
-        </label>
-        {% endfor %}
-      </div>
+    <p class="ios-section-header">相關教材</p>
+    <div class="ios-section mb-5">
+      {% for checkbox in form.materials %}
+      <label class="ios-cell cursor-pointer">
+        {{ checkbox.tag }}
+        <span class="text-[17px] text-black ml-1">{{ checkbox.choice_label }}</span>
+      </label>
+      {% endfor %}
     </div>
     {% endif %}
 
-    <div class="flex gap-3">
-      <button type="submit"
-              class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition text-sm">
-        儲存
-      </button>
-      <a href="javascript:history.back()"
-         class="flex-1 text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 rounded-xl transition text-sm">
-        取消
-      </a>
+    <div class="space-y-3 pb-6">
+      <button type="submit" class="ios-btn">儲存課程</button>
+      <a href="javascript:history.back()" class="ios-btn-gray">取消</a>
     </div>
+
   </form>
 </div>
 {% endblock %}

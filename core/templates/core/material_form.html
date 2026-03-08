@@ -1,84 +1,88 @@
 {% extends "core/base.html" %}
-{% block title %}{{ action }}{% endblock %}
+{% block title %}{{ action }} — Stucal{% endblock %}
 
 {% block content %}
-<div class="space-y-4">
+<div>
 
-  <div class="flex items-center gap-2">
-    <a href="javascript:history.back()" class="text-slate-400 hover:text-slate-600">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+  <!-- 返回 + 標題 -->
+  <div class="flex items-center gap-2 pb-4">
+    <a href="javascript:history.back()" class="text-[17px] text-[#007AFF] flex items-center gap-0.5">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
       </svg>
+      返回
     </a>
-    <h1 class="text-xl font-bold text-slate-800">{{ action }}</h1>
   </div>
+  <h1 class="text-[28px] font-bold tracking-tight text-black pb-5">{{ action }}</h1>
 
-  <form method="post" enctype="multipart/form-data" class="space-y-3">
+  <form method="post" enctype="multipart/form-data" class="space-y-0">
     {% csrf_token %}
 
     {% if form.errors %}
-    <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+    <div class="ios-section mb-5 border border-[rgba(255,59,48,0.3)]">
       {% for field in form %}{% for e in field.errors %}
-      <p class="text-red-600 text-sm">{{ field.label }}：{{ e }}</p>
+      <div class="ios-cell">
+        <p class="text-[15px] text-[#FF3B30]">{{ field.label }}：{{ e }}</p>
+      </div>
       {% endfor %}{% endfor %}
     </div>
     {% endif %}
 
-    <div class="bg-white border border-slate-200 rounded-xl px-4 py-4 space-y-4">
-
-      <div>
-        <label class="block text-xs font-medium text-slate-500 mb-1">{{ form.title.label }}</label>
+    <p class="ios-section-header" style="margin-top: 0;">基本資訊</p>
+    <div class="ios-section mb-5">
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">{{ form.title.label }}</label>
         {{ form.title }}
       </div>
-      <div>
-        <label class="block text-xs font-medium text-slate-500 mb-1">{{ form.subject.label }}</label>
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">{{ form.subject.label }}</label>
         {{ form.subject }}
       </div>
-      <div>
-        <label class="block text-xs font-medium text-slate-500 mb-1">{{ form.description.label }}</label>
+    </div>
+
+    <p class="ios-section-header">說明</p>
+    <div class="ios-section mb-5">
+      <div class="ios-cell items-start" style="min-height: 80px; align-items: flex-start; padding-top: 12px;">
         {{ form.description }}
       </div>
-      <div>
-        <label class="block text-xs font-medium text-slate-500 mb-1">{{ form.link.label }}</label>
+    </div>
+
+    <p class="ios-section-header">連結</p>
+    <div class="ios-section mb-5">
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">網址</label>
         {{ form.link }}
       </div>
+    </div>
 
-      <div x-data="{ fileName: '' }">
-        <label class="block text-xs font-medium text-slate-500 mb-2">{{ form.file.label }}</label>
-
-        {% if material.file %}
-        <div class="flex items-center gap-2 mb-2 bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-2">
-          <span class="text-xs text-indigo-700 truncate flex-1">📎 {{ material.file_name }}</span>
-          <a href="{{ material.file.url }}" target="_blank" class="text-xs text-indigo-600 hover:underline flex-shrink-0">開啟</a>
-        </div>
-        <p class="text-xs text-slate-400 mb-2">重新上傳以取代，或留空保留原檔</p>
-        {% endif %}
-
-        <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100 transition"
-               @dragover.prevent @drop.prevent="fileName = $event.dataTransfer.files[0]?.name || ''">
-          <div x-show="!fileName" class="text-center">
-            <p class="text-sm text-slate-500">點擊選擇或拖曳檔案</p>
-            <p class="text-xs text-slate-400 mt-0.5">PDF、Word、PPT、Excel、圖片，最大 20MB</p>
-          </div>
-          <div x-show="fileName" x-cloak class="text-sm text-indigo-600 font-medium" x-text="'✓ ' + fileName"></div>
-          <input type="file" name="file" class="hidden"
-                 accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png"
-                 @change="fileName = $event.target.files[0]?.name || ''">
-        </label>
+    <!-- 上傳檔案 -->
+    <p class="ios-section-header">附件</p>
+    <div class="ios-section mb-5" x-data="{ fileName: '' }">
+      {% if material.file %}
+      <div class="ios-cell">
+        <span class="text-[17px] text-black flex-1">{{ material.file_name }}</span>
+        <a href="{{ material.file.url }}" target="_blank" class="text-[15px] text-[#007AFF]">開啟</a>
       </div>
-
+      {% endif %}
+      <label class="ios-cell cursor-pointer ios-cell-nav">
+        <div>
+          <p class="text-[17px] text-black">
+            <span x-show="!fileName">{% if material.file %}更換檔案{% else %}選擇檔案{% endif %}</span>
+            <span x-show="fileName" x-cloak class="text-[#007AFF]" x-text="fileName"></span>
+          </p>
+          <p class="text-[13px] text-[#8E8E93]" x-show="!fileName">PDF、Word、PPT、Excel、圖片，最大 20MB</p>
+        </div>
+        <input type="file" name="file" class="hidden"
+               accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png"
+               @change="fileName = $event.target.files[0]?.name || ''">
+      </label>
     </div>
 
-    <div class="flex gap-3">
-      <button type="submit"
-              class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition text-sm">
-        儲存
-      </button>
-      <a href="javascript:history.back()"
-         class="flex-1 text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-3 rounded-xl transition text-sm">
-        取消
-      </a>
+    <div class="pt-1 space-y-3 pb-6">
+      <button type="submit" class="ios-btn">儲存</button>
+      <a href="javascript:history.back()" class="ios-btn-gray">取消</a>
     </div>
+
   </form>
 </div>
 {% endblock %}

@@ -1,47 +1,50 @@
 {% extends "core/base.html" %}
-{% block title %}課程紀錄{% endblock %}
+{% block title %}課程紀錄 — Stucal{% endblock %}
 
 {% block content %}
-<div class="space-y-4">
+<div>
 
-  <h1 class="text-xl font-bold text-slate-800">課程紀錄</h1>
+  <h1 class="text-[34px] font-bold tracking-tight text-black pb-5">課程紀錄</h1>
 
-  <div class="space-y-2">
+  {% if sessions %}
+  <div class="ios-section mb-6">
     {% for session in sessions %}
     <a href="{% url 'session_detail' session.pk %}"
-       class="bg-white border border-slate-200 rounded-xl px-4 py-3.5 flex items-start justify-between gap-3 hover:border-slate-300 transition block">
-      <div class="flex-1 min-w-0">
-        <p class="font-semibold text-slate-800 text-sm">
+       class="ios-cell ios-cell-nav{% if not forloop.first %} border-t border-[rgba(60,60,67,0.29)]{% endif %} items-start">
+      <div class="flex-1 min-w-0 py-0.5">
+        <p class="text-[17px] font-semibold text-black leading-snug">
           {{ session.date|date:"Y 年 n 月 j 日" }}
-          <span class="text-slate-400 font-normal">{{ session.date|date:"l" }}</span>
+          <span class="text-[#8E8E93] font-normal text-[15px]">{{ session.date|date:"l" }}</span>
         </p>
-        <p class="text-xs text-slate-500 mt-0.5 tabular-nums">
+        <p class="text-[13px] text-[#8E8E93] tabular-nums mt-0.5">
           {{ session.time_start|time:"H:i" }} — {{ session.time_end|time:"H:i" }}（{{ session.duration_minutes }} 分鐘）
         </p>
         {% if session.actual_content %}
-        <p class="text-xs text-slate-500 mt-1.5 leading-relaxed truncate">{{ session.actual_content|truncatechars:80 }}</p>
+        <p class="text-[13px] text-[#8E8E93] mt-1 leading-relaxed line-clamp-2">
+          {{ session.actual_content|truncatechars:80 }}
+        </p>
         {% else %}
-        <p class="text-xs text-slate-400 mt-1.5 italic">尚未填寫紀錄</p>
+        <p class="text-[13px] text-[#C7C7CC] italic mt-1">尚未填寫課程紀錄</p>
         {% endif %}
         {% if session.materials.all %}
-        <div class="flex flex-wrap gap-1 mt-2">
+        <div class="flex flex-wrap gap-1 mt-1.5">
           {% for mat in session.materials.all %}
-          <span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{{ mat.title }}</span>
+          <span class="badge badge-gray">{{ mat.title }}</span>
           {% endfor %}
         </div>
         {% endif %}
       </div>
-      <svg class="w-4 h-4 text-slate-300 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-      </svg>
     </a>
-    {% empty %}
-    <div class="text-center py-12">
-      <p class="text-3xl mb-2">📋</p>
-      <p class="text-sm text-slate-400">尚無已完成的課程</p>
-    </div>
     {% endfor %}
   </div>
+  {% else %}
+  <div class="ios-section mb-6">
+    <div class="ios-cell justify-center flex-col py-12 gap-2">
+      <p class="text-[40px]">📋</p>
+      <p class="text-[17px] text-[#8E8E93]">尚無已完成的課程</p>
+    </div>
+  </div>
+  {% endif %}
 
 </div>
 {% endblock %}

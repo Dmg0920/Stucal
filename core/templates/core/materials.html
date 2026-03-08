@@ -1,84 +1,81 @@
 {% extends "core/base.html" %}
-{% block title %}教材庫{% endblock %}
+{% block title %}教材 — Stucal{% endblock %}
 
 {% block content %}
-<div class="space-y-4">
+<div>
 
-  <div class="flex items-center justify-between">
-    <h1 class="text-xl font-bold text-slate-800">教材庫</h1>
+  <div class="flex items-end justify-between pb-4">
+    <h1 class="text-[34px] font-bold tracking-tight text-black leading-tight">教材庫</h1>
     {% if role == 'teacher' %}
-    <a href="{% url 'material_new' %}"
-       class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg font-medium transition">
-      + 新增
-    </a>
+    <a href="{% url 'material_new' %}" class="text-[17px] font-medium text-[#007AFF] pb-1">新增</a>
     {% endif %}
   </div>
 
+  <!-- 科目篩選 -->
   {% if subjects %}
-  <div class="flex flex-wrap gap-1.5">
+  <div class="flex gap-2 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
     <a href="{% url 'materials_list' %}"
-       class="text-xs px-3 py-1.5 rounded-full font-medium transition
-              {% if not subject_filter %}bg-indigo-600 text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:border-slate-300{% endif %}">
+       class="flex-shrink-0 text-[13px] font-medium px-3.5 py-1.5 rounded-full transition
+              {% if not subject_filter %}bg-[#007AFF] text-white{% else %}bg-white text-[#8E8E93] border border-[rgba(60,60,67,0.2)]{% endif %}">
       全部
     </a>
     {% for subject in subjects %}
     <a href="?subject={{ subject }}"
-       class="text-xs px-3 py-1.5 rounded-full font-medium transition
-              {% if subject_filter == subject %}bg-indigo-600 text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:border-slate-300{% endif %}">
+       class="flex-shrink-0 text-[13px] font-medium px-3.5 py-1.5 rounded-full transition
+              {% if subject_filter == subject %}bg-[#007AFF] text-white{% else %}bg-white text-[#8E8E93] border border-[rgba(60,60,67,0.2)]{% endif %}">
       {{ subject }}
     </a>
     {% endfor %}
   </div>
   {% endif %}
 
-  <div class="space-y-2">
+  <!-- 教材列表 -->
+  {% if materials %}
+  <div class="ios-section mb-6">
     {% for material in materials %}
-    <div class="bg-white border border-slate-200 rounded-xl px-4 py-3.5">
-      <div class="flex items-start justify-between gap-3">
+    <div class="ios-cell items-start flex-col{% if not forloop.first %} border-t border-[rgba(60,60,67,0.29)]{% endif %}">
+      <div class="flex items-start justify-between w-full gap-3">
         <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">{{ material.subject }}</span>
+          <div class="flex items-center gap-2 mb-0.5">
+            <span class="badge badge-blue">{{ material.subject }}</span>
           </div>
-          <p class="font-medium text-slate-800 text-sm">{{ material.title }}</p>
+          <p class="text-[17px] font-medium text-black leading-snug">{{ material.title }}</p>
           {% if material.description %}
-          <p class="text-xs text-slate-500 mt-0.5 leading-relaxed">{{ material.description }}</p>
+          <p class="text-[13px] text-[#8E8E93] mt-0.5 leading-relaxed">{{ material.description }}</p>
           {% endif %}
           {% if material.file %}
-          <p class="text-xs text-slate-400 mt-1">📎 {{ material.file_name }}</p>
+          <p class="text-[13px] text-[#8E8E93] mt-1">📎 {{ material.file_name }}</p>
           {% endif %}
         </div>
-        <div class="flex flex-col gap-1 flex-shrink-0">
+        <div class="flex flex-col gap-1.5 flex-shrink-0 pt-0.5">
           {% if material.file %}
           <a href="{{ material.file.url }}" target="_blank"
-             class="text-xs text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg transition font-medium">
-            下載
-          </a>
+             class="text-[13px] font-medium text-[#007AFF] text-right">下載</a>
           {% endif %}
           {% if material.link %}
           <a href="{{ material.link }}" target="_blank"
-             class="text-xs text-slate-600 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-lg transition font-medium">
-            連結
-          </a>
+             class="text-[13px] font-medium text-[#007AFF] text-right">連結</a>
           {% endif %}
           {% if role == 'teacher' %}
           <a href="{% url 'material_edit' material.pk %}"
-             class="text-xs text-slate-500 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-lg transition font-medium">
-            編輯
-          </a>
+             class="text-[13px] font-medium text-[#8E8E93] text-right">編輯</a>
           {% endif %}
         </div>
       </div>
     </div>
-    {% empty %}
-    <div class="text-center py-12 text-slate-400">
-      <p class="text-3xl mb-2">📚</p>
-      <p class="text-sm">尚無教材</p>
-      {% if role == 'teacher' %}
-      <a href="{% url 'material_new' %}" class="text-indigo-500 text-sm mt-2 inline-block hover:underline">新增第一個教材</a>
-      {% endif %}
-    </div>
     {% endfor %}
   </div>
+  {% else %}
+  <div class="ios-section mb-6">
+    <div class="ios-cell justify-center flex-col py-10 gap-2">
+      <p class="text-[40px]">📚</p>
+      <p class="text-[17px] text-[#8E8E93]">尚無教材</p>
+      {% if role == 'teacher' %}
+      <a href="{% url 'material_new' %}" class="text-[15px] text-[#007AFF] mt-1">新增第一個教材</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
 
 </div>
 {% endblock %}
