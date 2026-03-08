@@ -59,6 +59,12 @@
           {% if role == 'teacher' %}
           <a href="{% url 'material_edit' material.pk %}"
              class="text-[13px] font-medium text-[#8E8E93] text-right">編輯</a>
+          <form method="post" action="{% url 'material_delete' material.pk %}"
+                onsubmit="return confirm('確定要刪除「{{ material.title }}」嗎？')">
+            {% csrf_token %}
+            <button type="submit"
+                    class="text-[13px] font-medium text-[#FF3B30] text-right">刪除</button>
+          </form>
           {% endif %}
         </div>
       </div>

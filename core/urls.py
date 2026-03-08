@@ -28,6 +28,8 @@ urlpatterns = [
     path('materials/', views.materials_list, name='materials_list'),
     path('materials/new/', views.material_new, name='material_new'),
     path('materials/<int:pk>/edit/', views.material_edit, name='material_edit'),
+    path('materials/<int:pk>/delete/', views.material_delete, name='material_delete'),
+    path('session/<int:pk>/delete/', views.session_delete, name='session_delete'),
     path('history/', views.history, name='history'),
 
     # 舊路由相容

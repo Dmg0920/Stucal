@@ -342,6 +342,20 @@ def session_edit(request, pk):
     return render(request, 'core/session_form.html', {'form': form, 'session': session, 'action': '編輯課程', **base_context(request)})
 
 
+def session_delete(request, pk):
+    teacher, student, role, redir = _require_auth(request)
+    if redir:
+        return redir
+    if role != 'teacher':
+        return redirect('session_detail', pk=pk)
+    session = get_object_or_404(Session, pk=pk, student=student)
+    if request.method == 'POST':
+        session.delete()
+        messages.success(request, '課程已刪除')
+        return redirect('calendar')
+    return redirect('session_detail', pk=pk)
+
+
 def session_new(request):
     teacher, student, role, redir = _require_auth(request)
     if redir:
@@ -415,6 +429,20 @@ def material_edit(request, pk):
     else:
         form = MaterialForm(instance=material, teacher=teacher)
     return render(request, 'core/material_form.html', {'form': form, 'material': material, 'action': '編輯教材', **base_context(request)})
+
+
+def material_delete(request, pk):
+    teacher, student, role, redir = _require_auth(request)
+    if redir:
+        return redir
+    if role != 'teacher':
+        return redirect('materials_list')
+    material = get_object_or_404(Material, pk=pk, teacher=teacher)
+    if request.method == 'POST':
+        material.delete()
+        messages.success(request, '教材已刪除')
+        return redirect('materials_list')
+    return redirect('materials_list')
 
 
 def history(request):

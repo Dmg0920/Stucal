@@ -96,8 +96,13 @@
   {% endif %}
 
   {% if role == 'teacher' %}
-  <div class="pb-6">
+  <div class="pb-6 flex flex-col gap-3">
     <a href="{% url 'session_edit' session.pk %}" class="ios-btn">編輯課程</a>
+    <form method="post" action="{% url 'session_delete' session.pk %}"
+          onsubmit="return confirm('確定要刪除這堂課程嗎？此操作無法復原。')">
+      {% csrf_token %}
+      <button type="submit" class="ios-btn-destructive w-full">刪除課程</button>
+    </form>
   </div>
   {% endif %}
 
