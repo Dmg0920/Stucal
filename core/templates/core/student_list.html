@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+{% block title %}學生管理 — Stucal{% endblock %}
+
+{% block content %}
+<div>
+  <h1 class="text-[34px] font-bold tracking-tight text-black pb-5">我的學生</h1>
+
+  {% if students %}
+  <div class="ios-section mb-5">
+    {% for student in students %}
+    <div class="ios-cell{% if not forloop.first %} border-t border-[rgba(60,60,67,0.12)]{% endif %} justify-between">
+      <div class="flex-1 min-w-0">
+        <p class="text-[17px] font-medium text-black">
+          {{ student.shown_name }}
+          {% if student.display_name and student.display_name != student.name %}
+          <span class="text-[#8E8E93] font-normal text-[15px]">（{{ student.name }}）</span>
+          {% endif %}
+        </p>
+        <p class="text-[13px] text-[#8E8E93] mt-0.5 font-mono tracking-widest">密鑰：{{ student.access_key }}</p>
+        <p class="text-[12px] mt-0.5
+          {% if student.joined %}text-[#34C759]{% else %}text-[#FF9500]{% endif %}">
+          {% if student.joined %}✓ 已加入{% else %}⏳ 尚未加入{% endif %}
+        </p>
+      </div>
+      <a href="{% url 'student_select' student.pk %}"
+         class="ml-3 px-4 py-2 rounded-lg text-[15px] font-medium
+         {% if current_student.pk == student.pk %}bg-[#007AFF] text-white{% else %}bg-[rgba(0,122,255,0.10)] text-[#007AFF]{% endif %}">
+        {% if current_student.pk == student.pk %}目前選中{% else %}切換{% endif %}
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="ios-section mb-5">
+    <div class="ios-cell justify-center flex-col py-12 gap-2">
+      <p class="text-[40px]">👥</p>
+      <p class="text-[17px] text-[#8E8E93]">尚無學生，先新增一位吧</p>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="pb-6">
+    <a href="{% url 'student_add' %}" class="ios-btn">+ 新增學生</a>
+  </div>
+
+  <div class="ios-section mb-5">
+    <a href="{% url 'teacher_logout' %}" class="ios-cell justify-center text-[17px] text-[#FF3B30] font-medium">
+      登出
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "core/base_public.html" %}
+{% block title %}Stucal — 家教課程管理{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col items-center justify-center px-6 pb-12">
+
+  <!-- Logo + 標題 -->
+  <div class="text-center mb-10 mt-16">
+    <div class="w-20 h-20 bg-[#007AFF] rounded-[22px] flex items-center justify-center mx-auto mb-5 shadow-lg">
+      <svg class="w-11 h-11 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+      </svg>
+    </div>
+    <h1 class="text-[34px] font-bold tracking-tight text-black">Stucal</h1>
+    <p class="text-[17px] text-[#8E8E93] mt-1">家教課程管理平台</p>
+  </div>
+
+  <!-- 功能亮點 -->
+  <div class="w-full max-w-sm ios-section mb-8">
+    <div class="ios-cell gap-3">
+      <div class="w-8 h-8 bg-[rgba(0,122,255,0.12)] rounded-lg flex items-center justify-center flex-shrink-0">
+        <svg class="w-4 h-4 text-[#007AFF]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-[17px] font-medium text-black">課程排程與紀錄</p>
+        <p class="text-[13px] text-[#8E8E93]">管理所有課程安排與上課內容</p>
+      </div>
+    </div>
+    <div class="ios-cell gap-3">
+      <div class="w-8 h-8 bg-[rgba(52,199,89,0.12)] rounded-lg flex items-center justify-center flex-shrink-0">
+        <svg class="w-4 h-4 text-[#34C759]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-[17px] font-medium text-black">多學生管理</p>
+        <p class="text-[13px] text-[#8E8E93]">同時管理多位學生，輕鬆切換</p>
+      </div>
+    </div>
+    <div class="ios-cell gap-3">
+      <div class="w-8 h-8 bg-[rgba(255,149,0,0.12)] rounded-lg flex items-center justify-center flex-shrink-0">
+        <svg class="w-4 h-4 text-[#FF9500]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-[17px] font-medium text-black">教材共享</p>
+        <p class="text-[13px] text-[#8E8E93]">上傳教材並分享給學生</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 按鈕 -->
+  <div class="w-full max-w-sm space-y-3">
+    <a href="{% url 'teacher_login' %}" class="ios-btn">老師登入</a>
+    <a href="{% url 'teacher_register' %}" class="ios-btn-secondary">老師註冊申請</a>
+    <div class="relative flex items-center py-1">
+      <div class="flex-grow border-t border-[rgba(60,60,67,0.12)]"></div>
+      <span class="mx-3 text-[13px] text-[#8E8E93]">學生</span>
+      <div class="flex-grow border-t border-[rgba(60,60,67,0.12)]"></div>
+    </div>
+    <a href="{% url 'student_join' %}" class="ios-btn-gray text-center block">以密鑰加入課程</a>
+  </div>
+
+</div>
+{% endblock %}

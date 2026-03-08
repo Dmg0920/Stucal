@@ -1,0 +1,13 @@
+{% extends "core/base_public.html" %}
+{% block title %}審核中 — Stucal{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+  <p class="text-[60px] mb-4">⏳</p>
+  <h1 class="text-[28px] font-bold text-black mb-2">申請審核中</h1>
+  <p class="text-[17px] text-[#8E8E93] mb-8 leading-relaxed">
+    您的老師帳號正在等待管理員審核。<br>審核完成後即可登入使用。
+  </p>
+  <a href="{% url 'teacher_login' %}" class="ios-btn-secondary px-10">返回登入頁</a>
+</div>
+{% endblock %}

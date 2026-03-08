@@ -1,0 +1,37 @@
+{% extends "core/base_public.html" %}
+{% block title %}設定名稱 — Stucal{% endblock %}
+
+{% block content %}
+<div class="max-w-sm mx-auto px-4 pt-12 pb-10">
+
+  <div class="text-center mb-8">
+    <p class="text-[60px] mb-3">👋</p>
+    <h1 class="text-[28px] font-bold text-black">歡迎加入！</h1>
+    <p class="text-[15px] text-[#8E8E93] mt-1">請設定你的顯示名稱</p>
+  </div>
+
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+
+    {% if form.errors %}
+    <div class="ios-section">
+      {% for field in form %}{% for e in field.errors %}
+      <div class="ios-cell"><p class="text-[15px] text-[#FF3B30]">{{ e }}</p></div>
+      {% endfor %}{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="ios-section">
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">名稱</label>
+        {{ form.display_name }}
+      </div>
+    </div>
+    <p class="ios-section-footer">老師看到你的名稱，可以是你的暱稱或真名。</p>
+
+    <div class="pt-2">
+      <button type="submit" class="ios-btn w-full">開始使用 Stucal</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

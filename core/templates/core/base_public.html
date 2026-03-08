@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{% block title %}Stucal{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+
+    :root {
+      --blue:   #007AFF;
+      --green:  #34C759;
+      --orange: #FF9500;
+      --red:    #FF3B30;
+      --gray:   #8E8E93;
+      --gray4:  #D1D1D6;
+      --gray5:  #E5E5EA;
+      --gray6:  #F2F2F7;
+      --label:  #000000;
+      --label2: rgba(60,60,67,0.60);
+      --label3: rgba(60,60,67,0.30);
+      --sep:    rgba(60,60,67,0.29);
+    }
+
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, 'SF Pro Text', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang TC', sans-serif;
+      background: var(--gray6);
+      color: var(--label);
+      min-height: 100vh;
+    }
+
+    .nav-bar {
+      background: rgba(255,255,255,0.85);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 0.5px solid var(--sep);
+    }
+
+    .ios-section {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .ios-cell {
+      min-height: 44px;
+      padding: 10px 16px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ios-cell + .ios-cell {
+      border-top: 0.5px solid var(--sep);
+    }
+    .ios-cell-nav::after {
+      content: '';
+      display: block;
+      width: 7px;
+      height: 12px;
+      margin-left: auto;
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 12'%3E%3Cpath d='M1 1l5 5-5 5' stroke='%23C7C7CC' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .ios-section-header {
+      font-size: 13px;
+      color: var(--label2);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0 20px 6px;
+      margin-top: 22px;
+    }
+    .ios-section-footer {
+      font-size: 13px;
+      color: var(--label2);
+      padding: 6px 20px 0;
+    }
+
+    .ios-cell input[type="text"],
+    .ios-cell input[type="url"],
+    .ios-cell input[type="date"],
+    .ios-cell input[type="time"],
+    .ios-cell input[type="password"],
+    .ios-cell select {
+      border: none !important;
+      outline: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      font-size: 17px;
+      color: #000;
+      flex: 1;
+      text-align: right;
+      min-width: 0;
+      padding: 0 !important;
+    }
+    .ios-cell textarea {
+      border: none !important;
+      outline: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      font-size: 15px;
+      color: #000;
+      width: 100%;
+      resize: none;
+      padding: 0 !important;
+      line-height: 1.5;
+    }
+    .ios-cell input::placeholder,
+    .ios-cell textarea::placeholder { color: var(--gray4); }
+
+    /* standalone inputs */
+    input[type="text"], input[type="url"], input[type="date"], input[type="time"],
+    input[type="password"], textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 17px;
+      border: none;
+      background: #fff;
+      color: #000;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus { outline: none; }
+
+    .ios-btn {
+      display: block;
+      background: var(--blue);
+      color: #fff;
+      font-size: 17px;
+      font-weight: 600;
+      text-align: center;
+      padding: 14px;
+      border-radius: 12px;
+      transition: opacity 0.15s;
+      cursor: pointer;
+      width: 100%;
+    }
+    .ios-btn:active { opacity: 0.75; }
+
+    .ios-btn-secondary {
+      display: block;
+      background: rgba(0,122,255,0.10);
+      color: var(--blue);
+      font-size: 17px;
+      font-weight: 600;
+      text-align: center;
+      padding: 14px;
+      border-radius: 12px;
+      width: 100%;
+    }
+
+    .ios-btn-gray {
+      display: block;
+      background: var(--gray5);
+      color: var(--label);
+      font-size: 17px;
+      font-weight: 500;
+      text-align: center;
+      padding: 14px;
+      border-radius: 12px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Minimal nav -->
+  <header class="nav-bar sticky top-0 z-40">
+    <div class="max-w-lg mx-auto px-4 h-[52px] flex items-center">
+      <a href="{% url 'landing' %}" class="text-[17px] font-bold tracking-tight text-black">Stucal</a>
+    </div>
+  </header>
+
+  {% if messages %}
+  <div class="max-w-sm mx-auto px-4 pt-3 space-y-2">
+    {% for message in messages %}
+    <div x-data="{ show: true }" x-show="show" x-cloak
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="flex items-center justify-between bg-white rounded-xl px-4 py-3 text-sm shadow-sm">
+      <div class="flex items-center gap-2">
+        <span class="text-[#34C759] text-base">✓</span>
+        <span class="text-black">{{ message }}</span>
+      </div>
+      <button @click="show = false" class="text-[#8E8E93] ml-3">✕</button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+
+</body>
+</html>

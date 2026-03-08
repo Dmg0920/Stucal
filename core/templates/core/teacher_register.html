@@ -1,0 +1,65 @@
+{% extends "core/base_public.html" %}
+{% block title %}老師申請 — Stucal{% endblock %}
+
+{% block content %}
+<div class="max-w-sm mx-auto px-4 pt-8 pb-10">
+
+  <div class="pb-4">
+    <a href="{% url 'landing' %}" class="text-[17px] text-[#007AFF] flex items-center gap-0.5 w-fit">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+      </svg>
+      返回
+    </a>
+  </div>
+  <h1 class="text-[28px] font-bold text-black pb-5">老師申請</h1>
+
+  <form method="post" class="space-y-0">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="ios-section mb-4">
+      {% for e in form.non_field_errors %}
+      <div class="ios-cell"><p class="text-[15px] text-[#FF3B30]">{{ e }}</p></div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <p class="ios-section-header" style="margin-top:0;">帳號資訊</p>
+    <div class="ios-section mb-5">
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">帳號</label>
+        {{ form.username }}
+      </div>
+      {% if form.username.errors %}<p class="text-[13px] text-[#FF3B30] px-4 pt-1">{{ form.username.errors.0 }}</p>{% endif %}
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">密碼</label>
+        {{ form.password1 }}
+      </div>
+      {% if form.password1.errors %}<p class="text-[13px] text-[#FF3B30] px-4 pt-1">{{ form.password1.errors.0 }}</p>{% endif %}
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">確認密碼</label>
+        {{ form.password2 }}
+      </div>
+      {% if form.password2.errors %}<p class="text-[13px] text-[#FF3B30] px-4 pt-1">{{ form.password2.errors.0 }}</p>{% endif %}
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">姓名</label>
+        {{ form.full_name }}
+      </div>
+    </div>
+
+    <p class="ios-section-header">上課證明</p>
+    <div class="ios-section mb-1">
+      <div class="ios-cell flex-col items-start" style="min-height:100px; padding-top:12px; align-items:flex-start;">
+        {{ form.proof }}
+      </div>
+    </div>
+    <p class="ios-section-footer mb-5">請說明您的教學背景、科目與教學經驗，管理員審核後會啟用帳號。</p>
+
+    <div class="space-y-3 pb-6">
+      <button type="submit" class="ios-btn">提交申請</button>
+      <a href="{% url 'teacher_login' %}" class="ios-btn-gray text-center block">已有帳號？登入</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

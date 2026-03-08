@@ -1,0 +1,55 @@
+{% extends "core/base_public.html" %}
+{% block title %}老師登入 — Stucal{% endblock %}
+
+{% block content %}
+<div class="max-w-sm mx-auto px-4 pt-12 pb-10">
+
+  <div class="text-center mb-8">
+    <div class="w-16 h-16 bg-[#007AFF] rounded-[18px] flex items-center justify-center mx-auto mb-4">
+      <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+      </svg>
+    </div>
+    <h1 class="text-[28px] font-bold text-black">老師登入</h1>
+  </div>
+
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="ios-section">
+      {% for e in form.non_field_errors %}
+      <div class="ios-cell">
+        <p class="text-[15px] text-[#FF3B30]">{{ e }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="ios-section">
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-16 flex-shrink-0">帳號</label>
+        {{ form.username }}
+      </div>
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-16 flex-shrink-0">密碼</label>
+        {{ form.password }}
+      </div>
+    </div>
+
+    <button type="submit" class="ios-btn w-full">登入</button>
+  </form>
+
+  <div class="mt-6 text-center space-y-2">
+    <p class="text-[15px] text-[#8E8E93]">
+      還沒有帳號？
+      <a href="{% url 'teacher_register' %}" class="text-[#007AFF]">申請成為老師</a>
+    </p>
+    <p class="text-[15px] text-[#8E8E93]">
+      是學生嗎？
+      <a href="{% url 'student_join' %}" class="text-[#007AFF]">以密鑰加入</a>
+    </p>
+  </div>
+
+</div>
+{% endblock %}

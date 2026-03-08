@@ -1,0 +1,42 @@
+{% extends "core/base.html" %}
+{% block title %}{{ action }} — Stucal{% endblock %}
+
+{% block content %}
+<div>
+  <div class="pb-4">
+    <a href="{% url 'student_list' %}" class="text-[17px] text-[#007AFF] flex items-center gap-0.5 w-fit">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+      </svg>
+      返回
+    </a>
+  </div>
+  <h1 class="text-[28px] font-bold tracking-tight text-black pb-5">{{ action }}</h1>
+
+  <form method="post" class="space-y-0">
+    {% csrf_token %}
+
+    {% if form.errors %}
+    <div class="ios-section mb-5">
+      {% for field in form %}{% for e in field.errors %}
+      <div class="ios-cell"><p class="text-[15px] text-[#FF3B30]">{{ field.label }}：{{ e }}</p></div>
+      {% endfor %}{% endfor %}
+    </div>
+    {% endif %}
+
+    <p class="ios-section-header" style="margin-top:0;">學生資訊</p>
+    <div class="ios-section mb-1">
+      <div class="ios-cell">
+        <label class="text-[17px] text-black w-20 flex-shrink-0">名稱</label>
+        {{ form.name }}
+      </div>
+    </div>
+    <p class="ios-section-footer mb-5">系統會自動產生 8 碼密鑰，讓學生用密鑰加入課程。</p>
+
+    <div class="space-y-3 pb-6">
+      <button type="submit" class="ios-btn">新增學生</button>
+      <a href="{% url 'student_list' %}" class="ios-btn-gray text-center block">取消</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
