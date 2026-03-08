@@ -138,11 +138,9 @@ def teacher_logout(request):
 
 @teacher_login_required
 def student_list(request):
-    teacher = get_teacher(request)
-    students = teacher.students.all()
-    current_student = get_current_student(request)
     ctx = base_context(request)
-    ctx.update({'students': students, 'current_student': current_student})
+    teacher = ctx['teacher']
+    ctx['students'] = teacher.students.all()
     return render(request, 'core/student_list.html', ctx)
 
 
@@ -244,6 +242,15 @@ def _require_auth(request):
     return None, None, 'guest', redirect('landing')
 
 
+def _make_base_ctx(teacher, student, role):
+    """從 _require_auth 已取得的物件建立 base context，不再查詢 DB。"""
+    if role == 'teacher':
+        return {'teacher': teacher, 'current_student': student, 'student_obj': None, 'role': 'teacher'}
+    if role == 'student':
+        return {'teacher': None, 'current_student': None, 'student_obj': student, 'role': 'student'}
+    return {'teacher': None, 'current_student': None, 'student_obj': None, 'role': 'guest'}
+
+
 def home(request):
     teacher, student, role, redir = _require_auth(request)
     if redir:
@@ -262,7 +269,7 @@ def home(request):
 
     last_completed = qs.filter(status='completed').order_by('-date', '-time_start').first()
 
-    ctx = base_context(request)
+    ctx = _make_base_ctx(teacher, student, role)
     ctx.update({
         'today': today,
         'today_session': today_session,
@@ -303,7 +310,7 @@ def calendar_view(request):
 
     first_pk_by_day = {day: sessions_list[0].pk for day, sessions_list in session_dates.items()}
 
-    ctx = base_context(request)
+    ctx = _make_base_ctx(teacher, student, role)
     ctx.update({
         'calendar': cal, 'year': year, 'month': month,
         'month_name': month_names[month], 'today': today,
@@ -319,7 +326,7 @@ def session_detail(request, pk):
     if redir:
         return redir
     session = get_object_or_404(Session, pk=pk, student=student)
-    ctx = base_context(request)
+    ctx = _make_base_ctx(teacher, student, role)
     ctx['session'] = session
     return render(request, 'core/session_detail.html', ctx)
 
@@ -339,7 +346,7 @@ def session_edit(request, pk):
             return redirect('session_detail', pk=session.pk)
     else:
         form = SessionForm(instance=session, teacher=teacher, student=student)
-    return render(request, 'core/session_form.html', {'form': form, 'session': session, 'action': '編輯課程', **base_context(request)})
+    return render(request, 'core/session_form.html', {'form': form, 'session': session, 'action': '編輯課程', **_make_base_ctx(teacher, student, role)})
 
 
 def session_delete(request, pk):
@@ -373,7 +380,7 @@ def session_new(request):
             return redirect('session_detail', pk=session.pk)
     else:
         form = SessionForm(initial={'date': date.today(), 'status': 'scheduled'}, teacher=teacher, student=student)
-    return render(request, 'core/session_form.html', {'form': form, 'session': None, 'action': '新增課程', **base_context(request)})
+    return render(request, 'core/session_form.html', {'form': form, 'session': None, 'action': '新增課程', **_make_base_ctx(teacher, student, role)})
 
 
 def materials_list(request):
@@ -389,7 +396,7 @@ def materials_list(request):
         materials = materials.filter(subject__icontains=subject_filter)
 
     subjects = Material.objects.filter(teacher=teacher).values_list('subject', flat=True).distinct()
-    ctx = base_context(request)
+    ctx = _make_base_ctx(teacher, student, role)
     ctx.update({'materials': materials, 'subjects': subjects, 'subject_filter': subject_filter})
     return render(request, 'core/materials.html', ctx)
 
@@ -410,7 +417,7 @@ def material_new(request):
             return redirect('materials_list')
     else:
         form = MaterialForm(teacher=teacher)
-    return render(request, 'core/material_form.html', {'form': form, 'action': '新增教材', **base_context(request)})
+    return render(request, 'core/material_form.html', {'form': form, 'action': '新增教材', **_make_base_ctx(teacher, student, role)})
 
 
 def material_edit(request, pk):
@@ -428,7 +435,7 @@ def material_edit(request, pk):
             return redirect('materials_list')
     else:
         form = MaterialForm(instance=material, teacher=teacher)
-    return render(request, 'core/material_form.html', {'form': form, 'material': material, 'action': '編輯教材', **base_context(request)})
+    return render(request, 'core/material_form.html', {'form': form, 'material': material, 'action': '編輯教材', **_make_base_ctx(teacher, student, role)})
 
 
 def material_delete(request, pk):
@@ -450,7 +457,7 @@ def history(request):
     if redir:
         return redir
     sessions = Session.objects.filter(student=student, status='completed').order_by('-date', '-time_start')
-    ctx = base_context(request)
+    ctx = _make_base_ctx(teacher, student, role)
     ctx['sessions'] = sessions
     return render(request, 'core/history.html', ctx)
 
