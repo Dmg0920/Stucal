@@ -496,9 +496,8 @@ def panel_logout(request):
 
 @admin_required
 def panel_dashboard(request):
-    all_profiles = TeacherProfile.objects.select_related('user').order_by('user__date_joined')
-    pending = [p for p in all_profiles if not p.user.is_active]
-    approved = [p for p in all_profiles if p.user.is_active and p.is_approved]
+    pending = TeacherProfile.objects.select_related('user').filter(user__is_active=False).order_by('user__date_joined')
+    approved = TeacherProfile.objects.select_related('user').filter(user__is_active=True, is_approved=True).order_by('user__date_joined')
 
     total_students = Student.objects.count()
     total_sessions = Session.objects.count()
